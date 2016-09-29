@@ -1,0 +1,4 @@
+# GITIGNORE FILE
+*.swp
+*.o
+a.out

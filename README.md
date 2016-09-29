@@ -12,5 +12,5 @@ d’origen, l’aeroport destí, el retard en sortir, el retard en arribar, etc.
 d’aquesta informació i gestionar-la.
 
 ### Alumnes
-__German Dempere__
+__German Dempere__  
 __Arnau Sistach__
