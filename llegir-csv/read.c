@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MAXCHAR  100
+#define MAXCHAR  128
 
 char *line;
 FILE *fp;
@@ -11,9 +11,24 @@ struct node
 {
 	char dia;	// Dia, conté valors entre 1 i 7, on 1 és el dilluns i 7 diumenge.
 	int retard;	// Els minuts de retard en arribar a destinació.
-	char origen[4]; // Origen del vol en IATA
-	char desti[4];	// Desti del vol en IATA
+	char origen[5]; // Origen del vol en IATA
+	char desti[5];	// Desti del vol en IATA
 };
+
+/**
+  * Retorna el punter de la columna "abansada" desitjada.
+  */
+char * advanceColumn ( int i )
+{
+	char *token = (char *) 1;
+	int k = 0;
+
+	
+	while ( (k++ < i) & token != NULL )
+		token = strtok ( NULL, "," );
+
+	return token;
+}
 
 void readLineFile (struct node * nd)
 {
@@ -24,8 +39,23 @@ void readLineFile (struct node * nd)
 	{
 		token = strtok ( line, "," );
 
-k = 1;
+		token = advanceColumn ( 3 );
+		if ( token ) // Estem a la columna 4, per tenir el dia de la setmana.
+			nd->dia = token[0];
 
+		token = advanceColumn ( 11 );
+		if ( token ) // Estem a la columna 15 ( 11+3+1 ), per tenir el retard del vol.
+			nd->retard = atoi ( token );
+
+		token = advanceColumn ( 2 );
+		if ( token ) // Estem a la columna 17, per a tenir l'origen de l'aeroport.
+			nd->origen = token;
+
+		token = advanceColumn ( 1 );
+		if ( token ) // estem a la columna 18, per a tenir el destí.
+			nd->desti = token;
+
+/*
 		while ( (k < 4) & token != NULL )
 		{ token = strtok ( NULL, "," ); k++; }
 
@@ -39,9 +69,13 @@ k = 1;
 			if ( token != NULL )
 			{ // Valor de retard del vol, només ens interesa el valor. Llavors ho convertim directament a int.
 				nd->retard = atoi ( token );
-printf ("token: %s\n", token );
+
+				while ( (k < 17) & token != NULL )
+				{ token = strtok ( NULL, "," ); k++; }
+
 			}
 		}
+*/
 	}
 }
 
@@ -65,5 +99,9 @@ int main ( int argc, char **argv )
 
 	readLineFile ( &np );
 	mostrarNode ( np );
+
+
+fclose(fp);
+free(line);
 return 0;
 }
