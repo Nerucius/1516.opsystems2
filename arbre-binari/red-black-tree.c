@@ -37,7 +37,9 @@
 
 static void freeRBData(RBData *data)
 {
-  free(data);
+//printf ("lloc: %s\n", data->key );
+	free (data->key);
+	free(data);
 }
 
 /**
@@ -73,7 +75,7 @@ static int compEQ(TYPE_RBTREE_KEY key1, TYPE_RBTREE_KEY key2)
   rc = strcmp ( key1, key2 );
 
   if (rc == 0)
-    return 1
+    return 1;
 
   return 0;
 }
@@ -308,11 +310,11 @@ RBData *findNode(RBTree *tree, TYPE_RBTREE_KEY key) {
 
 static void deleteTreeRecursive(Node *x)
 {
-  if (x->right != NIL)
-    deleteTreeRecursive(x->right);
-
   if (x->left != NIL)
     deleteTreeRecursive(x->left);
+
+  if (x->right != NIL)
+    deleteTreeRecursive(x->right);
 
   freeRBData(x->data);
   free(x);
@@ -331,5 +333,3 @@ void deleteTree(RBTree *tree)
   if (tree->root != NIL)
     deleteTreeRecursive(tree->root);
 }
-
-

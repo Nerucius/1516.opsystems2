@@ -2,41 +2,41 @@
 #include <stdio.h>
 #include <string.h>
 
-
-#include "../arbre-binari/red-black-tree.c"
+#include "read.h"
 
 #define MAXCHAR  128
 
+/**
+  * Variables que ens permeten que funcions externes puguin treballar
+  * sense haber inicialitzat res.
+  */
 char *line;
 FILE *fp;
 
-struct node
-{
-	char dia;	// Dia, conté valors entre 1 i 7, on 1 és el dilluns i 7 diumenge.
-	int retard;	// Els minuts de retard en arribar a destinació.
-	char origen[5]; // Origen del vol en IATA
-	char desti[5];	// Desti del vol en IATA
-};
 
 /**
   * Retorna el punter de la columna "abansada" desitjada.
   */
 char * advanceColumn ( int i )
 {
-	char *token = (char *) 1;
+	char *token = (char *) 1; // Per poder entrar dins el while
 	int k = 0;
 
-	
-	while ( (k++ < i) & token != NULL )
+	while ( (k++ < i) & (token != NULL) )
 		token = strtok ( NULL, "," );
 
 	return token;
 }
 
-void readLineFile (struct node * nd)
+
+/**
+  * Return 0, is correct
+  * Return 1, error, csv
+  * Return 2, error, no next line
+  */
+int readLineFile (struct nodeRead * nd)
 {
 	char *token;
-	int k;
 
 	if (fgets(line, MAXCHAR, fp) != NULL)
 	{
@@ -44,45 +44,62 @@ void readLineFile (struct node * nd)
 
 		token = advanceColumn ( 3 );
 		if ( token ) // Estem a la columna 4, per tenir el dia de la setmana.
-			nd->dia = token[0];
+			nd->dia = (char) atoi ( token );
+		else return 1;
 
 		token = advanceColumn ( 11 );
 		if ( token ) // Estem a la columna 15 ( 11+3+1 ), per tenir el retard del vol.
 			nd->retard = atoi ( token );
+		else return 1;
 
 		token = advanceColumn ( 2 );
 		if ( token ) // Estem a la columna 17, per a tenir l'origen de l'aeroport.
-			nd->origen = token;
+		{
+			nd->origen = (char *) malloc ( sizeof (char) * (strlen (token)+1) );
+			strcpy (nd->origen, token);
+			nd->origen[strlen (token)] = '\0';
+		}
+		else return 1;
 
 		token = advanceColumn ( 1 );
 		if ( token ) // estem a la columna 18, per a tenir el destí.
-			nd->desti = token;
-	}
+		{
+//			nd->desti = (char *) malloc ( sizeof (char) * (strlen (token)+1) );
+//			strcpy (nd->desti, token);
+//			nd->desti[strlen (token)] = '\0';
+		}
+		else return 1;
+	} else return 2;
+return 0;
 }
 
-void mostrarNode ( struct node np )
+// Per testeixar el nostre codi
+void mostrarNode ( struct nodeRead np )
 {
 	printf ( "dia:\t%c\n", np.dia );
 	printf ( "retard:\t%d\n", np.retard );
 }
 
-int main ( int argc, char **argv )
+/**
+  * Serveix per a inicialitzar el read.
+  */
+void readInitFile ( char* name )
 {
-	struct node np;
 	line = (char *) malloc(sizeof(char) * MAXCHAR);
 
-	fp = fopen ( "file.csv", "r" );
+	fp = fopen ( name, "r" );
 	if (!fp)
 	{
-		printf("Could not open file\n" );
-		exit(1);
+		printf ("El fitxer: %s\nNo existeix, o no tenim permisos.\n", name);
+		exit (1);
 	}
+}
 
-	readLineFile ( &np );
-	mostrarNode ( np );
-
-
-fclose(fp);
-free(line);
-return 0;
+/**
+  * Serveix per acabar amb el read.
+  */
+void readEndFile ()
+{
+	free (line);
+	fclose (fp);
 }

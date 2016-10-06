@@ -2,3 +2,6 @@
 *.swp
 *.o
 a.out
+
+# Per defecte al compilar ajuda del profe
+main

@@ -27,5 +27,5 @@ FILES_O = $(subst .c,.o,$(FILES_C))
 #all: $(TARGET) 
 
 clean:
-	/bin/rm $(FILES_O)
+	rm $(FILES_O) -f
 # $(TARGET) 
