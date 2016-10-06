@@ -332,4 +332,5 @@ void deleteTree(RBTree *tree)
 {
   if (tree->root != NIL)
     deleteTreeRecursive(tree->root);
+  free (tree);
 }
