@@ -4,14 +4,11 @@
 #include "../llegir-csv/read.h"
 #include "../arbre-binari/red-black-tree.h"
 
-#define MAX 10000
-
 int main ()
 {
 	struct nodeRead nr;	// Per poder llegir el document.
 	int bucle = 1;		// Per estar dins el while.
 	int outRead;		// Per saber que ha tret el readLineFile.
-	int maxBucle = MAX;	// Valor, per saber quantes línies llegir.
 
 	RBTree * tree;		// El abre que guardarem tota la informació.
 	RBData * treeData;	// Node del abre, per a poder treballar comodament.
@@ -26,7 +23,7 @@ int main ()
 	initTree(tree);
 
 	// Llegeix tot el fitxer
-	while ( bucle && maxBucle-- )
+	while ( bucle )
 	{
 		outRead = readLineFile (&nr);
 		if ( outRead == 0 )
@@ -37,6 +34,7 @@ int main ()
 			if ( treeData )
 			{
 				//printf ( "." );
+				free ( nr.origen );
 			} else
 			{ // En cas de no haber trobat a ningú.
 				treeData = malloc(sizeof(RBData));

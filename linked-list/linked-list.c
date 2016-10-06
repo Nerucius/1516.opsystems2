@@ -53,9 +53,9 @@ static int compEQ(TYPE_LIST_KEY key1, TYPE_LIST_KEY key2)
 {
   int rc;
 
-  rc = 0;
+  rc = strcmp ();
 
-  if (key1 == key2)
+  if (key1 == 0 )
     rc = 1;
 
   return rc;
