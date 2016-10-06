@@ -1,3 +1,5 @@
+#include "../linked-list/linked-list.h"
+
 /**
  *
  * Red-black tree header 
@@ -5,7 +7,7 @@
  *
  */
 
-#define TYPE_RBTREE_KEY int
+#define TYPE_RBTREE_KEY char*
 
 /**
  *
@@ -26,7 +28,7 @@ typedef struct RBData_
   // This is the additional information that will be stored
   // within the structure. You may adapt it to your needs:
   // add or remove fields as you need.
-  int num;
+  List* llistaEntrelazada;
 } RBData;
 
 /**
@@ -69,4 +71,3 @@ void initTree(RBTree *tree);
 void insertNode(RBTree *tree, RBData *data);
 RBData *findNode(RBTree *tree, TYPE_RBTREE_KEY key); 
 void deleteTree(RBTree *tree);
-

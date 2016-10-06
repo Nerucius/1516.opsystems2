@@ -14,3 +14,20 @@ d’aquesta informació i gestionar-la.
 ### Alumnes
 __German Dempere__  
 __Arnau Sistach__
+
+Objectius
+=========
+
+Llegir el document
+------------------
+De moment sembla que ho fem correctament.
+
+Insertar al abre binari
+-----------------------
+Aparentment no ho fem. Tot i tenir-ho tot per a poder-ho fer.
+
+Llista enllaçada
+----------------
+Aquesta és prou complexa, ja que s'ha de tenir la resta feta.
+Tenir present que aquesta llista entrellaçada ha de tenir com a cos un array de 7x2 per a poder recuperar posteriorment el mean.
+Per a que pugui funcionar, recordar a inicialitzar els valors a zero. Per exemple amb un calloc.

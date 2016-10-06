@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 
+
+#include "../arbre-binari/red-black-tree.c"
+
 #define MAXCHAR  128
 
 char *line;
@@ -54,28 +57,6 @@ void readLineFile (struct node * nd)
 		token = advanceColumn ( 1 );
 		if ( token ) // estem a la columna 18, per a tenir el destí.
 			nd->desti = token;
-
-/*
-		while ( (k < 4) & token != NULL )
-		{ token = strtok ( NULL, "," ); k++; }
-
-		if ( token != NULL )
-		{ // 1 - 7, llavors agafem només el primer valor
-			nd->dia = token[0];
-
-			while ( (k < 15) & token != NULL )
-			{ token = strtok ( NULL, "," ); k++; }
-
-			if ( token != NULL )
-			{ // Valor de retard del vol, només ens interesa el valor. Llavors ho convertim directament a int.
-				nd->retard = atoi ( token );
-
-				while ( (k < 17) & token != NULL )
-				{ token = strtok ( NULL, "," ); k++; }
-
-			}
-		}
-*/
 	}
 }
 

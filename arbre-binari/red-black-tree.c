@@ -51,12 +51,12 @@ static int compLT(TYPE_RBTREE_KEY key1, TYPE_RBTREE_KEY key2)
 {
   int rc;
 
-  rc = 0;
+  rc = strcmp ( key1, key2 );
 
-  if (key1 < key2)
-    rc = 1;
+  if ( rc < 0 )
+    return 1;
 
-  return rc;
+  return 0;
 }
 
 /**
@@ -70,12 +70,12 @@ static int compEQ(TYPE_RBTREE_KEY key1, TYPE_RBTREE_KEY key2)
 {
   int rc;
 
-  rc = 0;
+  rc = strcmp ( key1, key2 );
 
-  if (key1 == key2)
-    rc = 1;
+  if (rc == 0)
+    return 1
 
-  return rc;
+  return 0;
 }
 
 /**

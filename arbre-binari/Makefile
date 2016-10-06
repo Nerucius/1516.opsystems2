@@ -1,10 +1,11 @@
 # This is the makefile that generates the executable
 
 # Files to compile
-FILES_C = main.c red-black-tree.c
+#FILES_C = main.c red-black-tree.c
+FILES_C = red-black-tree.c
 
 # Exectuable to generate
-TARGET = main
+#TARGET = main
 
 # Compilation options
 CFLAGS = -Wall -Werror -g
@@ -17,13 +18,14 @@ LFLAGS = -lm
 
 FILES_O = $(subst .c,.o,$(FILES_C))
 
-$(TARGET): $(FILES_O) Makefile
-	gcc $(FILES_O) -o $(TARGET) $(LFLAGS) 
+#$(TARGET): $(FILES_O) Makefile
+#	gcc $(FILES_O) -o $(TARGET) $(LFLAGS) 
 
 %.o: %.c Makefile
 	gcc $(CFLAGS) -c $<
 
-all: $(TARGET) 
+#all: $(TARGET) 
 
 clean:
-	/bin/rm $(FILES_O) $(TARGET) 
+	/bin/rm $(FILES_O)
+# $(TARGET) 
