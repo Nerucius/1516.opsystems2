@@ -39,6 +39,7 @@ static void freeRBData(RBData *data)
 {
 //printf ("lloc: %s\n", data->key );
 	free (data->key);
+	deleteList(data->llista);
 	free(data);
 }
 

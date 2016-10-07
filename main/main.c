@@ -4,17 +4,88 @@
 #include "../llegir-csv/read.h"
 #include "../arbre-binari/red-black-tree.h"
 
-int main ()
+/**
+  * Afegeix correctament la informació dins la llista.
+  */
+void inputList ( List * list, nodeRead nr )
 {
-	struct nodeRead nr;	// Per poder llegir el document.
-	int bucle = 1;		// Per estar dins el while.
-	int outRead;		// Per saber que ha tret el readLineFile.
+	int i;
+	ListData *listData;
+	char dia = nr.dia;
+	char*desti = nr.desti;
 
-	RBTree * tree;		// El abre que guardarem tota la informació.
+	/* Search if the key is in the tree */
+	listData = findList(list, a);
+
+	if (listData)
+	{ // Existeix ja l'element
+		free (desti);
+
+	} else
+	{
+		listData = malloc(sizeof(ListData));
+
+		listData->key = desti;	// Clau
+
+		for ( i = 6; i ; i-- )	// Contingut
+		{
+			listData->count[i] = 0;
+			listData->total[i] = 0;
+		}
+
+		insertList(list, listData);
+	}
+
+	// Actualitza la informació desitjada.
+	listData->count[dia]++;
+	listData->total[dia] += nr.retard;
+}
+
+/**
+  * Fa el necessari per afegir la informació.
+  * En cas de no existir el node, el crea.
+  * En cas d'existir, allivera la memòria. Tot i actualitzar la llista.
+  */
+void inputElementTree ( RBTree * tree, nodeRead nr )
+{
 	RBData * treeData;	// Node del abre, per a poder treballar comodament.
+	List *list;		// Llista, el que conté l'abre
 
-	readInitFile ( "../llegir-csv/file.csv" );
+	char *origen = nr.origen;
+	treeData = findNode (tree, origen);
 
+	if ( treeData )
+	{ // Ja existeix, alliverem la memoria.
+		free ( origen );
+	} else
+	{ // Sino, el generem.
+		// Clau.
+		treeData = malloc (sizeof(RBData));
+		treeData->key = origen;
+
+		// Contingut.
+		list = (List *) malloc(sizeof(List));
+		initList(list);
+		treeData->llista = list;
+
+		insertNode (tree, treeData);
+	}
+	inputList ( treeData->llista, nr );
+}
+
+/**
+  * A partir d'una llista de nodes,
+  * crea i posa els elements dins l'arbre, on retornara el punter.
+  *
+  * key = origen
+  *
+  * Contingut = llista
+  *	- key = desti
+  *	- contingut = meanWeek
+  */
+RBTree* inputTree ( nodeRead * ListNR, int lenght )
+{
+	RBTree * tree;		// El abre que guardarem tota la informació.
 
 	/* Allocate memory for tree */
 	tree = (RBTree *) malloc(sizeof(RBTree));
@@ -22,40 +93,21 @@ int main ()
 	/* Initialize the tree */
 	initTree(tree);
 
-	// Llegeix tot el fitxer
-	while ( bucle )
-	{
-		outRead = readLineFile (&nr);
-		if ( outRead == 0 )
-		{
-			/* Search if the key is in the tree */
-			treeData = findNode(tree, nr.origen); 
+	while ( --lenght ) // Recorrerem tots els elements.
+		inputElementTree ( tree, ListNR[lenght] );
+return tree;
+}
 
-			if ( treeData )
-			{
-				//printf ( "." );
-				free ( nr.origen );
-			} else
-			{ // En cas de no haber trobat a ningú.
-				treeData = malloc(sizeof(RBData));
-				treeData->key = nr.origen;
 
-				insertNode(tree, treeData);
-			}
-		} else if ( outRead == 1 )
-		{
-			printf ( "Hem detectat un error dins del fitxer.\n" );
-			exit (2);
-		} else if ( outRead == 2 )
-		{
-			bucle = 0; // Sortim del bucle.
-			readEndFile ();
-		} else
-		{
-			printf ( "Estat inesperat dins del while (bucle)\n" );
-			exit (3);
-		}
-	}
+int main ()
+{
+	RBTree * tree;		// El abre que guardarem tota la informació.
+
+	// Llegeix tot el fitxer.
+	ListNR = readInitFile ( "../llegir-csv/file.csv", &lenght );
+
+	// Insereix tot al arbre.
+	tree = inputTree ( ListNR, lenght );
 
 /* Delete the tree */
 deleteTree(tree);

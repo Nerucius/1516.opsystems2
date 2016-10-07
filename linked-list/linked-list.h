@@ -36,7 +36,8 @@ typedef struct ListData_ {
   // This is the additional information that will be stored
   // within the structure. This additional information is associated
   // to the key. You may include any field you may need useful.
-  int numTimes;
+  int count[7];
+  int total[7];
 } ListData;
 
 

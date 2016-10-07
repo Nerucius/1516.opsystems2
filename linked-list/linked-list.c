@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /**
  * We include the linked-list.h header. Note the double
@@ -28,7 +29,8 @@
 
 static void freeListData(ListData *data)
 {
-  free(data); 
+	free(data->key); // l'unic que cal alliberar.
+	free(data); 
 }
 
 /**
@@ -53,12 +55,12 @@ static int compEQ(TYPE_LIST_KEY key1, TYPE_LIST_KEY key2)
 {
   int rc;
 
-  rc = strcmp ();
+  rc = strcmp ( key1, key2);
 
-  if (key1 == 0 )
-    rc = 1;
+  if (rc == 0 )
+    return 1;
 
-  return rc;
+  return 0;
 }
 
 /**
@@ -179,8 +181,7 @@ void deleteList(List *l)
     current = next;
   }
 
-  l->numItems = 0;
-  l->first = NULL;
+  free (l);
 }
 
 /**
