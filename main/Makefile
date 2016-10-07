@@ -1,7 +1,7 @@
 # Genera els executables i el main per a que pugui ser executat.
 
 # Fitxers externs a compilar
-FILES_O_OUT = ../llegir-csv/read.o ../arbre-binari/red-black-tree.o
+FILES_O_OUT = ../llegir-csv/read.o ../arbre-binari/red-black-tree.o ../linked-list/linked-list.o
 #linked-list/
 
 # Compilation options
@@ -18,6 +18,8 @@ main: $(FILES_O_OUT) main.o
 
 ../llegir-csv/read.o: ../llegir-csv/read.c
 	cd ../llegir-csv; make clean; make read.o
+../linked-list/linked-list.o: ../linked-list/linked-list.c
+	cd ../linked-list; make clean; make linked-list.o
 
 clean:
 	cd ../arbre-binari; make clean

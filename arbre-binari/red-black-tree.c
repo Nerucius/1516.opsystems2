@@ -26,6 +26,9 @@
 
 #include "red-black-tree.h"
 
+/* Per a poder eliminar les llistes */
+#include "../linked-list/linked-list.h"
+
 /**
  *
  * Free data element. The user should adapt this function to their needs.  This

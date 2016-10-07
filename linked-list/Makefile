@@ -26,4 +26,4 @@ $(TARGET): $(FILES_O) Makefile
 all: $(TARGET) 
 
 clean:
-	/bin/rm $(FILES_O) $(TARGET) 
+	/bin/rm $(FILES_O) $(TARGET) -f

@@ -4,82 +4,93 @@
 
 #include "read.h"
 
+// Tamany maxim que mirarem.
 #define LINE_SIZE 256
 
+// Linia de columnes que te el document.
+#define AIR_COLUMN 28
+#define AIR_DATA 10
+
+// Com mes proper sigui del valor real millor.
+// Si el pasa, exelent.
+#define INIT_SIZE 100
+
+// Tamany maxim que llegirem per una línia.
 #define MAXCHAR  128
 
 /**
   * Variables que ens permeten que funcions externes puguin treballar
   * sense haber inicialitzat res.
   */
-char *line;
 FILE *fp;
+int size_real;
 
 
 /**
-  * Retorna el punter de la columna "abansada" desitjada.
+  * Funció simple, per a simplificar el copiar amb malloc.
   */
-char * advanceColumn ( int i )
+char * copyMalloc ( char * in )
 {
-	char *token = (char *) 1; // Per poder entrar dins el while
-	int k = 0;
-
-	while ( (k++ < i) & (token != NULL) )
-		token = strtok ( NULL, "," );
-
-	return token;
+	char * out = (char *) malloc ( sizeof (char) * (strlen(in) + 1) );
+	strcpy ( out, in );
+return out;
 }
 
+/**
+  * Funció per a simplificar la memòria dinàmica.
+  */
+void appendList ( DataNode* list, int lenght, DataNode dn )
+{
+	if (lenght == size_real)
+	{
+		size_real = (size_real * 3)/2;
+		list = realloc ( list, sizeof (DataNode) * size_real );
+	}
+	list[lenght] = dn;
+}
 
 /**
   * Return 0, is correct
-  * Return 1, error, csv
-  * Return 2, error, no next line
+  * Return 1, error, no next line
   */
-int readLineFile (struct nodeRead * nd)
+int readCSV ( char all[AIR_COLUMN][AIR_DATA] )
 {
+	int i;
 	char *token;
+	char line[MAXCHAR];
 
 	if (fgets(line, MAXCHAR, fp) != NULL)
 	{
 		token = strtok ( line, "," );
-
-		token = advanceColumn ( 3 );
-		if ( token ) // Estem a la columna 4, per tenir el dia de la setmana.
-			nd->dia = (char) atoi ( token );
-		else return 1;
-
-		token = advanceColumn ( 11 );
-		if ( token ) // Estem a la columna 15 ( 11+3+1 ), per tenir el retard del vol.
-			nd->retard = atoi ( token );
-		else return 1;
-
-		token = advanceColumn ( 2 );
-		if ( token ) // Estem a la columna 17, per a tenir l'origen de l'aeroport.
+// && token, només és un sistema de seguretat. Perque AIR_COLUMN havia posat 29 petava.
+// Seguretat + arreclat el 29 per 28.
+		for ( i = 0; (i < AIR_COLUMN) && token; i++ )
 		{
-			nd->origen = (char *) malloc ( sizeof (char) * (strlen (token)+1) );
-			strcpy (nd->origen, token);
-			nd->origen[strlen (token)] = '\0';
+			strcpy ( all[i], token );
+			token = strtok ( NULL, "," );
 		}
-		else return 1;
-
-		token = advanceColumn ( 1 );
-		if ( token ) // estem a la columna 18, per a tenir el destí.
-		{
-//			nd->desti = (char *) malloc ( sizeof (char) * (strlen (token)+1) );
-//			strcpy (nd->desti, token);
-//			nd->desti[strlen (token)] = '\0';
-		}
-		else return 1;
-	} else return 2;
-return 0;
+		return 0;
+	}
+return 1;
 }
 
-// Per testeixar el nostre codi
-void mostrarNode ( struct nodeRead np )
+/**
+  * Genera l'objecte que necessitem.
+  *
+  * En cas de finalitzar, escriu a o un zero.
+  */
+DataNode readCSVline ( char columsData[AIR_COLUMN][AIR_DATA], int *o )
 {
-	printf ( "dia:\t%c\n", np.dia );
-	printf ( "retard:\t%d\n", np.retard );
+	DataNode dn;
+
+	if (readCSV ( columsData )) *o = 0;
+
+// És un menys de la columna (ja que comença perl 0 i no pel 1)
+	dn.dia		= atoi ( columsData[4 -1] );
+	dn.retard	= atoi ( columsData[15 -1] );
+	dn.origen	= copyMalloc ( columsData[17 -1] );
+	dn.desti	= copyMalloc ( columsData[18 -1] );
+return dn;
 }
 
 /**
@@ -87,8 +98,6 @@ void mostrarNode ( struct nodeRead np )
   */
 void readInitFile ( char* name )
 {
-	line = (char *) malloc(sizeof(char) * MAXCHAR);
-
 	fp = fopen ( name, "r" );
 	if (!fp)
 	{
@@ -96,16 +105,39 @@ void readInitFile ( char* name )
 		exit (1);
 	}
 }
-
 /**
-  * Serveix per acabar amb el read.
+  * Funcio que llegeix tot el fitxer,
+  * llavors omple els nodes de forma correcta.
   */
-void readEndFile ()
+DataNode *readCSVfile(char *filename, int *size)
 {
-	free (line);
-	fclose (fp);
+	DataNode * list;
+	DataNode dn;
+	int out = 1;
+	char columsData[AIR_COLUMN][AIR_DATA];
+	size_real = INIT_SIZE;
+	readInitFile ( filename );
+
+	list = ( DataNode * ) malloc ( sizeof (DataNode) * size_real );
+
+	*size = 0;
+	dn = readCSVline ( columsData, &out );
+	while ( out )
+	{
+		appendList ( list, (*size)++, dn );
+		dn = readCSVline ( columsData, &out );
+	}
+return list;
 }
 
+
+
+
+/*******************************************!!!!!!!!!!!!!!!!!!**********************************/
+/*******************************************!!!!!!!!!!!!!!!!!!**********************************/
+/*******************************************!!!!!!!!!!!!!!!!!!**********************************/
+/*******************************************!!!!!!!!!!!!!!!!!!**********************************/
+/*******************************************!!!!!!!!!!!!!!!!!!**********************************
 char** splitLine(char* a_str, char a_delim){
 	char** result    = 0;
 	size_t count     = 0;
@@ -115,7 +147,7 @@ char** splitLine(char* a_str, char a_delim){
 	delim[0] = a_delim;
 	delim[1] = 0;
 
-	/* Count how many elements will be extracted. */
+	* Count how many elements will be extracted. *
 	while (*tmp){
 		if (a_delim == *tmp)
 		{
@@ -125,11 +157,11 @@ char** splitLine(char* a_str, char a_delim){
 		tmp++;
 	}
 
-	/* Add space for trailing token. */
+	* Add space for trailing token. *
 	count += last_comma < (a_str + strlen(a_str) - 1);
 
-	/* Add space for terminating null string so caller
-       knows where the list of returned strings ends. */
+	* Add space for terminating null string so caller
+       knows where the list of returned strings ends. *
 	count++;
 
 	result = malloc(sizeof(char*) * count);
@@ -177,3 +209,4 @@ nodeRead* readCSVFile(char* filename, int* size){
 	}
 
 }
+*/

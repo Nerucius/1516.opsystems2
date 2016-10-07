@@ -1,3 +1,5 @@
+#ifndef LINKED_LIST_H
+#define LINKED_LIST_H
 /**
  *
  * Linked-list header 
@@ -18,7 +20,7 @@
  *
  */
 
-#define TYPE_LIST_KEY int
+#define TYPE_LIST_KEY char*
 
 /**
  *
@@ -76,3 +78,4 @@ ListData *findList(List *l, TYPE_LIST_KEY key);
 void deleteFirstList(List *l);
 void deleteList(List *l);
 void dumpList(List *l);
+#endif /* LINKED_LIST_H */
