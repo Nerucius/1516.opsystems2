@@ -55,7 +55,6 @@ static int compEQ(TYPE_LIST_KEY key1, TYPE_LIST_KEY key2)
 {
   int rc;
 
-printf ( "key1: %s\tkey2: %s\n", key1, key2 );
   rc = strcmp ( key1, key2 );
 
   if (rc == 0 )
@@ -205,3 +204,39 @@ void dumpList(List *l)
   printf("Total number of items: %d\n", l->numItems);
 }
 
+/**
+  * Afegeix correctament la informació dins la llista.
+  */
+void inputList ( List * list, DataNode dn )
+{
+	int i;
+	ListData *listData;
+	int dia = dn.dia -1; // Ja que va de 1 fins a 7
+	char*desti = dn.desti;
+
+	/* Search if the key is in the tree */
+	listData = findList(list, desti);
+
+	if (listData)
+	{ // Existeix ja l'element
+		free (desti);
+
+	} else
+	{
+		listData = malloc(sizeof(ListData));
+
+		listData->key = desti;	// Clau
+
+		for ( i = 6; i ; i-- )	// Contingut
+		{
+			listData->count[i] = 0;
+			listData->total[i] = 0;
+		}
+
+		insertList(list, listData);
+	}
+
+	// Actualitza la informació desitjada.
+	listData->count[dia]++;
+	listData->total[dia] += dn.retard;
+}

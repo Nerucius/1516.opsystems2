@@ -93,7 +93,7 @@ DataNode readCSVline ( char columsData[AIR_COLUMN][AIR_DATA], int *o )
 	dn.dia		= atoi ( columsData[4 -1] );
 	dn.retard	= atoi ( columsData[15 -1] );
 	dn.origen	= copyMalloc ( columsData[17 -1] );
-	dn.desti	= NULL;//copyMalloc ( columsData[18 -1] ); !!!!!!!!!!!!!!!!!!!!!!!!!!!
+	dn.desti	= copyMalloc ( columsData[18 -1] );
 return dn;
 }
 

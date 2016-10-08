@@ -1,5 +1,7 @@
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H
+
+#include "../llegir-csv/def.h"
 /**
  *
  * Linked-list header 
@@ -78,4 +80,8 @@ ListData *findList(List *l, TYPE_LIST_KEY key);
 void deleteFirstList(List *l);
 void deleteList(List *l);
 void dumpList(List *l);
+
+
+// Implementat per nosaltres.
+void inputList ( List * list, DataNode dn );
 #endif /* LINKED_LIST_H */

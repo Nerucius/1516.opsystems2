@@ -41,7 +41,7 @@
 static void freeRBData(RBData *data)
 {
 	free (data->key);
-//	deleteList(data->llista); !!!!!!!!!!!!!!!!!
+	deleteList(data->llista);
 	free(data);
 }
 
@@ -347,7 +347,7 @@ void deleteTree(RBTree *tree)
 void inputElementTree ( RBTree * tree, DataNode dn )
 {
 	RBData * treeData;	// Node del abre, per a poder treballar comodament.
-//	List *list;		// Llista, el que conté l'abre !!!!!!!!!!!!!!!!!!!!!!!1
+	List *list;		// Llista, el que conté l'abre.
 
 	char *origen = dn.origen;
 	treeData = findNode (tree, origen);
@@ -362,13 +362,13 @@ void inputElementTree ( RBTree * tree, DataNode dn )
 		treeData->key = origen;
 
 		// Contingut.
-//		list = (List *) malloc(sizeof(List)); !!!!!!!!!!!!!!!!!!!!!!!!!
-//		initList(list);
-//		treeData->llista = list;
+		list = (List *) malloc(sizeof(List));
+		initList(list);
+		treeData->llista = list;
 
 		insertNode (tree, treeData);
 	}
-//	inputList ( treeData->llista, dn ); !!!!!!!!!!!!!!!!
+	inputList ( treeData->llista, dn );
 }
 
 /**
