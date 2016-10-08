@@ -55,7 +55,8 @@ static int compEQ(TYPE_LIST_KEY key1, TYPE_LIST_KEY key2)
 {
   int rc;
 
-  rc = strcmp ( key1, key2);
+printf ( "key1: %s\tkey2: %s\n", key1, key2 );
+  rc = strcmp ( key1, key2 );
 
   if (rc == 0 )
     return 1;
@@ -110,8 +111,6 @@ void insertList(List *l, ListData *data)
 
   /* Link data to inserted item */
   x->data = data;
-
-  l->numItems++;
 }
 
 /**

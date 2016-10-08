@@ -13,7 +13,7 @@
 
 // Com mes proper sigui del valor real millor.
 // Si el pasa, exelent.
-#define INIT_SIZE 100
+#define INIT_SIZE 10000
 
 // Tamany maxim que llegirem per una línia.
 #define MAXCHAR  128
@@ -83,13 +83,17 @@ DataNode readCSVline ( char columsData[AIR_COLUMN][AIR_DATA], int *o )
 {
 	DataNode dn;
 
-	if (readCSV ( columsData )) *o = 0;
+	if (readCSV ( columsData ))
+	{
+		*o = 0;
+		return dn;
+	}
 
 // És un menys de la columna (ja que comença perl 0 i no pel 1)
 	dn.dia		= atoi ( columsData[4 -1] );
 	dn.retard	= atoi ( columsData[15 -1] );
 	dn.origen	= copyMalloc ( columsData[17 -1] );
-	dn.desti	= copyMalloc ( columsData[18 -1] );
+	dn.desti	= NULL;//copyMalloc ( columsData[18 -1] ); !!!!!!!!!!!!!!!!!!!!!!!!!!!
 return dn;
 }
 
@@ -105,6 +109,8 @@ void readInitFile ( char* name )
 		exit (1);
 	}
 }
+
+
 /**
   * Funcio que llegeix tot el fitxer,
   * llavors omple els nodes de forma correcta.
@@ -127,86 +133,7 @@ DataNode *readCSVfile(char *filename, int *size)
 		appendList ( list, (*size)++, dn );
 		dn = readCSVline ( columsData, &out );
 	}
+
+fclose (fp);
 return list;
 }
-
-
-
-
-/*******************************************!!!!!!!!!!!!!!!!!!**********************************/
-/*******************************************!!!!!!!!!!!!!!!!!!**********************************/
-/*******************************************!!!!!!!!!!!!!!!!!!**********************************/
-/*******************************************!!!!!!!!!!!!!!!!!!**********************************/
-/*******************************************!!!!!!!!!!!!!!!!!!**********************************
-char** splitLine(char* a_str, char a_delim){
-	char** result    = 0;
-	size_t count     = 0;
-	char* tmp        = a_str;
-	char* last_comma = 0;
-	char delim[2];
-	delim[0] = a_delim;
-	delim[1] = 0;
-
-	* Count how many elements will be extracted. *
-	while (*tmp){
-		if (a_delim == *tmp)
-		{
-			count++;
-			last_comma = tmp;
-		}
-		tmp++;
-	}
-
-	* Add space for trailing token. *
-	count += last_comma < (a_str + strlen(a_str) - 1);
-
-	* Add space for terminating null string so caller
-       knows where the list of returned strings ends. *
-	count++;
-
-	result = malloc(sizeof(char*) * count);
-
-	if (result)
-	{
-		size_t idx  = 0;
-		char* token = strtok(a_str, delim);
-
-		while (token)
-		{
-			assert(idx < count);
-			*(result + idx++) = strdup(token);
-			token = strtok(0, delim);
-		}
-		assert(idx == count - 1);
-		*(result + idx) = 0;
-	}
-
-	return result;
-}
-
-nodeRead* readCSVFile(char* filename, int* size){
-	char* line = (char *) malloc(sizeof(char) * LINE_SIZE);
-	int read, i;
-	size_t len = 0;
-	char** columns;
-	//nodeRead tmpNode;
-
-	FILE* fp = fopen(filename, "r");
-	if(fp == NULL){
-		printf("File Not Found.");
-		exit(1);
-	}
-
-	while ((read = getline(&line, &len, fp)) != -1) {
-		columns = splitLine(line, ',');
-//		tmpNode = createNodeFromTokens(tokens);
-
-		for(i = 0; i < 18; i++){
-			printf("col: %s\n", columns[i]);
-		}
-
-		return;
-	}
-
-}
-*/

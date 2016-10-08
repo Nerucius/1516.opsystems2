@@ -40,9 +40,8 @@
 
 static void freeRBData(RBData *data)
 {
-//printf ("lloc: %s\n", data->key );
 	free (data->key);
-	deleteList(data->llista);
+//	deleteList(data->llista); !!!!!!!!!!!!!!!!!
 	free(data);
 }
 
@@ -337,4 +336,63 @@ void deleteTree(RBTree *tree)
   if (tree->root != NIL)
     deleteTreeRecursive(tree->root);
   free (tree);
+}
+
+
+/**
+  * Fa el necessari per afegir la informació.
+  * En cas de no existir el node, el crea.
+  * En cas d'existir, allivera la memòria. Tot i actualitzar la llista.
+  */
+void inputElementTree ( RBTree * tree, DataNode dn )
+{
+	RBData * treeData;	// Node del abre, per a poder treballar comodament.
+//	List *list;		// Llista, el que conté l'abre !!!!!!!!!!!!!!!!!!!!!!!1
+
+	char *origen = dn.origen;
+	treeData = findNode (tree, origen);
+
+	if ( treeData )
+	{ // Ja existeix, alliverem la memoria.
+		free ( origen );
+	} else
+	{ // Sino, el generem.
+		// Clau.
+		treeData = malloc (sizeof(RBData));
+		treeData->key = origen;
+
+		// Contingut.
+//		list = (List *) malloc(sizeof(List)); !!!!!!!!!!!!!!!!!!!!!!!!!
+//		initList(list);
+//		treeData->llista = list;
+
+		insertNode (tree, treeData);
+	}
+//	inputList ( treeData->llista, dn ); !!!!!!!!!!!!!!!!
+}
+
+/**
+  * A partir d'una llista de nodes,
+  * crea i posa els elements dins l'arbre, on retornara el punter.
+  *
+  * key = origen
+  *
+  * Contingut = llista
+  *	- key = desti
+  *	- contingut = meanWeek
+  */
+RBTree* inputTree ( DataNode * ListNR, int lenght )
+{
+	RBTree * tree;		// El abre que guardarem tota la informació.
+
+	/* Allocate memory for tree */
+	tree = (RBTree *) malloc(sizeof(RBTree));
+
+	/* Initialize the tree */
+	initTree(tree);
+
+	while ( lenght-- ) // Recorrerem tots els elements.
+		inputElementTree ( tree, ListNR[lenght] );
+free ( ListNR );
+return tree;
 }

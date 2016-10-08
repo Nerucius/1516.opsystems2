@@ -1,4 +1,5 @@
 #include "../linked-list/linked-list.h"
+#include "../llegir-csv/def.h"
 
 /**
  *
@@ -71,3 +72,10 @@ void initTree(RBTree *tree);
 void insertNode(RBTree *tree, RBData *data);
 RBData *findNode(RBTree *tree, TYPE_RBTREE_KEY key); 
 void deleteTree(RBTree *tree);
+
+
+/*
+ * per nosaltres
+ */
+RBTree* inputTree ( DataNode * ListNR, int lenght );
+void inputElementTree ( RBTree * tree, DataNode dn );
