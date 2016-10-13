@@ -77,5 +77,4 @@ void deleteTree(RBTree *tree);
 /*
  * per nosaltres
  */
-RBTree* inputTree ( DataNode * ListNR, int lenght );
-void inputElementTree ( RBTree * tree, DataNode dn );
+RBTree* inputTree ( DataNode * ListNR, int lenght ); // A partir d'una llista, afegeix a l'abre els elements.

@@ -229,7 +229,7 @@ void inputList ( List * list, DataNode dn )
 		ld->key = desti;	// Clau
 
 		ld->count = (int*) calloc ( 7, sizeof (int) ); // Contingut
-		ld->total = (int*) calloc ( 7, sizeof (int) );
+		ld->total = (int*) calloc ( 7, sizeof (int) ); // Calloc inicialitza tot a zero tal i com desitjem.
 
 		insertList(list, ld);
 	}

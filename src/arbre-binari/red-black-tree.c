@@ -343,6 +343,7 @@ void deleteTree(RBTree *tree)
   * Fa el necessari per afegir la informació.
   * En cas de no existir el node, el crea.
   * En cas d'existir, allivera la memòria. Tot i actualitzar la llista.
+  * Per l'enunciat del pdf, només agafarem aquells que l'origen és 3 de llarg.
   */
 void inputElementTree ( RBTree * tree, DataNode dn )
 {
@@ -399,5 +400,6 @@ RBTree* inputTree ( DataNode * ListNR, int lenght )
 
 	while ( lenght-- ) // Recorrerem tots els elements.
 		inputElementTree ( tree, ListNR[lenght] );
+free (ListNR);
 return tree;
 }

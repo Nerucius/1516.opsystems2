@@ -4,7 +4,7 @@
 
 #include "read.h"
 
-// Linia de columnes que te el document.
+// Linia de columnes que te el document, si et passes no és gaire greu. Quedar-se curt donarà problemes.
 #define AIR_COLUMN 28
 
 // Com mes proper sigui del valor real millor.
@@ -18,8 +18,8 @@
   * Variables que ens permeten que funcions externes puguin treballar
   * sense haber inicialitzat res.
   */
-FILE *fp;
-int size_real;
+FILE *fp;	// Serveix per a llegir el fitxer.
+int size_real;	// Serveix per saber quan vigilar amb el INIT_SIZE.
 
 
 /**
@@ -48,9 +48,10 @@ return list;
 
 /**
   * Tenim que per llegir la línia, necessitarà de line.
-  * I split necessari ho fara dins de v.
+  * I l'esplit necessari ho fara dins de v.
+  *
   * Return 0, is correct
-  * Return 1, error, no next line
+  * Return 1, no next line
   */
 int readCSV ( char line[MAXCHAR], char *v[AIR_COLUMN], char sep )
 {
@@ -80,25 +81,27 @@ return 1;
 /**
   * Genera l'objecte que necessitem.
   *
-  * En cas de finalitzar, escriu a o un zero.
+  * En cas de finalitzar, escriu a 'o' un zero.
   */
 DataNode readCSVline ( int *o )
 {
 	DataNode dn;
-	char line[MAXCHAR];
-	char *columsData[AIR_COLUMN];
+	char line[MAXCHAR];	// Informació sobre la línia, necessari que MAXCHAR sigui mínim el màxim de la línia.
+	char *cD[AIR_COLUMN];	// Informació traduida en columnes.
+	char **columsData;	// Només usat per evitar fer un -1 al columsData.
+	columsData = cD -1;
 
-	if (readCSV ( line, columsData, ',' ))
-	{
+	if (readCSV ( line, cD, ',' ))
+	{ // Vigilar el cas que no queden més línies.
 		*o = 0;
 		return dn;
 	}
 
-// És un menys de la columna (ja que comença perl 0 i no pel 1)
-	dn.dia		= atoi ( columsData[4 -1] );
-	dn.retard	= atoi ( columsData[15 -1] );
-	dn.origen	= copyMalloc ( columsData[17 -1] );
-	dn.desti	= copyMalloc ( columsData[18 -1] );
+// Guardem tota la informació al node.
+	dn.dia		= atoi (	columsData[4] );
+	dn.retard	= atoi (	columsData[15] );
+	dn.origen	= copyMalloc (	columsData[17] );
+	dn.desti	= copyMalloc (	columsData[18] );
 return dn;
 }
 
@@ -119,6 +122,8 @@ void readInitFile ( char* name )
 /**
   * Funcio que llegeix tot el fitxer,
   * llavors omple els nodes de forma correcta.
+  *
+  * Retorna amb una llista de tots els nodes que ha llegit.
   */
 DataNode *readCSVfile(char *filename, int *size)
 {

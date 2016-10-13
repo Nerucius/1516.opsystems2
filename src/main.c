@@ -10,7 +10,7 @@ int main ()
 {
 	int lenght;
 	RBTree * tree;		// El abre que guardarem tota la informació.
-	DataNode * ListNR;
+	DataNode * ListNR;	// La llista on guardarem tota la informació al llegir el fitxer.
 
 	// Llegeix tot el fitxer.
 	ListNR = readCSVfile ( "llegir-csv/file.csv", &lenght );
@@ -18,7 +18,6 @@ int main ()
 	// Insereix tot al arbre.
 	tree = inputTree ( ListNR, lenght );
 
-free ( ListNR );
 /* Delete the tree */
 deleteTree(tree);
 return 0;
