@@ -350,25 +350,31 @@ void inputElementTree ( RBTree * tree, DataNode dn )
 	List *list;		// Llista, el que conté l'abre.
 
 	char *origen = dn.origen;
-	treeData = findNode (tree, origen);
-
-	if ( treeData )
-	{ // Ja existeix, alliverem la memoria.
-		free ( origen );
+	if ( strlen (origen) != 3 )
+	{ // 3.2 apartat 4 ho demana
+		free (origen);
+		free (dn.desti);
 	} else
-	{ // Sino, el generem.
-		// Clau.
-		treeData = malloc (sizeof(RBData));
-		treeData->key = origen;
+	{
+		treeData = findNode (tree, origen);
+		if ( treeData )
+		{ // Ja existeix, alliverem la memoria.
+			free ( origen );
+		} else
+		{ // Sino, el generem.
+			// Clau.
+			treeData = malloc (sizeof(RBData));
+			treeData->key = origen;
 
-		// Contingut.
-		list = (List *) malloc(sizeof(List));
-		initList(list);
-		treeData->llista = list;
+			// Contingut.
+			list = (List *) malloc(sizeof(List));
+			initList(list);
+			treeData->llista = list;
 
-		insertNode (tree, treeData);
+			insertNode (tree, treeData);
+		}
+		inputList ( treeData->llista, dn );
 	}
-	inputList ( treeData->llista, dn );
 }
 
 /**
@@ -393,6 +399,5 @@ RBTree* inputTree ( DataNode * ListNR, int lenght )
 
 	while ( lenght-- ) // Recorrerem tots els elements.
 		inputElementTree ( tree, ListNR[lenght] );
-free ( ListNR );
 return tree;
 }

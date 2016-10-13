@@ -1,0 +1,40 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[catalan]{babel}
+% No tocar l'odre del que hi ha amunt.
+
+% Lletres romanes
+\usepackage{amsmath}
+
+% paquet per a fer boniquet
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[RE, RO]{\textbf{German.. i Sistach}}
+\fancyhead[LE, LO]{Sistemes Operatius $\textup{\uppercase\expandafter{\romannumeral 2}}$}
+% Fi boniquet
+
+% Per introduir .eps "taula del abre per exemple", el odre te importància
+\usepackage{graphicx}
+\usepackage{epstopdf}
+
+% Per poder posar codi
+\usepackage{listings}
+
+\author{Arnau Sistach Reinoso}
+\title{Pràctica 1}
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Seguint el guió}
+
+Farem el que indica l'enunciat per a tenir la pràctica llesta.
+
+\input{1Entrega/lectura.tex}
+\input{1Entrega/arbre.tex}
+\input{1Entrega/llista.tex}
+\input{1Entrega/altres.tex}
+
+\end{document}

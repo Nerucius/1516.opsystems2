@@ -4,15 +4,11 @@
 
 #include "read.h"
 
-// Tamany maxim que mirarem.
-#define LINE_SIZE 256
-
 // Linia de columnes que te el document.
 #define AIR_COLUMN 28
-#define AIR_DATA 10
 
 // Com mes proper sigui del valor real millor.
-// Si el pasa, exelent.
+// Si el pasa, exelent, però si l'exedeix, hi ha molta informació "perduda".
 #define INIT_SIZE 10000
 
 // Tamany maxim que llegirem per una línia.
@@ -39,36 +35,43 @@ return out;
 /**
   * Funció per a simplificar la memòria dinàmica.
   */
-void appendList ( DataNode* list, int lenght, DataNode dn )
+DataNode * appendList ( DataNode* list, int lenght, DataNode dn )
 {
-	if (lenght == size_real)
+	if (lenght >= size_real)
 	{
-		size_real = (size_real * 3)/2;
+		size_real = (lenght * 3)/2;
 		list = realloc ( list, sizeof (DataNode) * size_real );
 	}
 	list[lenght] = dn;
+return list;
 }
 
 /**
+  * Tenim que per llegir la línia, necessitarà de line.
+  * I split necessari ho fara dins de v.
   * Return 0, is correct
   * Return 1, error, no next line
   */
-int readCSV ( char all[AIR_COLUMN][AIR_DATA] )
+int readCSV ( char line[MAXCHAR], char *v[AIR_COLUMN], char sep )
 {
-	int i;
-	char *token;
-	char line[MAXCHAR];
+	int i, j;
+	char c;
 
+	i = 0; j = 1;
+	v[0] = line;
 	if (fgets(line, MAXCHAR, fp) != NULL)
 	{
-		token = strtok ( line, "," );
-// && token, només és un sistema de seguretat. Perque AIR_COLUMN havia posat 29 petava.
-// Seguretat + arreclat el 29 per 28.
-		for ( i = 0; (i < AIR_COLUMN) && token; i++ )
+		i = 0; j = 1;
+		v[0] = line;
+		do
 		{
-			strcpy ( all[i], token );
-			token = strtok ( NULL, "," );
-		}
+			c = line[i++];
+			if ( c == sep )
+			{
+				line[i -1] = '\0';
+				v[j++] = line + i;
+			}
+		} while ( c );
 		return 0;
 	}
 return 1;
@@ -79,11 +82,13 @@ return 1;
   *
   * En cas de finalitzar, escriu a o un zero.
   */
-DataNode readCSVline ( char columsData[AIR_COLUMN][AIR_DATA], int *o )
+DataNode readCSVline ( int *o )
 {
 	DataNode dn;
+	char line[MAXCHAR];
+	char *columsData[AIR_COLUMN];
 
-	if (readCSV ( columsData ))
+	if (readCSV ( line, columsData, ',' ))
 	{
 		*o = 0;
 		return dn;
@@ -120,20 +125,20 @@ DataNode *readCSVfile(char *filename, int *size)
 	DataNode * list;
 	DataNode dn;
 	int out = 1;
-	char columsData[AIR_COLUMN][AIR_DATA];
 	size_real = INIT_SIZE;
 	readInitFile ( filename );
 
 	list = ( DataNode * ) malloc ( sizeof (DataNode) * size_real );
 
 	*size = 0;
-	dn = readCSVline ( columsData, &out );
+	dn = readCSVline ( &out );
 	while ( out )
 	{
-		appendList ( list, (*size)++, dn );
-		dn = readCSVline ( columsData, &out );
+		list = appendList ( list, (*size)++, dn );
+		dn = readCSVline ( &out );
 	}
 
+list = realloc (list, sizeof (DataNode)**size);
 fclose (fp);
 return list;
 }

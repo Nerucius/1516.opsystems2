@@ -1,0 +1,25 @@
+\section{Sense el guió}
+
+FALLA
+\begin{lstlisting}[language=C]
+token = strtok ( line, "," );
+for ( i = 0; (i < AIR_COLUMN) && token; i++ )
+{
+	strcpy ( all[i], token );
+	token = strtok ( NULL, "," );
+}
+\end{lstlisting}
+
+
+Canviat i funciona!
+\begin{lstlisting}[language=C]
+do
+{
+	c = line[i++];
+	if ( c == ',' )
+	{
+		line[i -1] = '\0';
+		v[j++] = line + i;
+	}
+} while ( c );
+\end{lstlisting}

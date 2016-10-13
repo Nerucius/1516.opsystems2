@@ -1,0 +1,9 @@
+.TS
+c c
+l | l.
+Commanda	Informaci\*[']o
+=
+valgrind ./main 20	No
+valgrind -v ./main 20	No
+valgrind --leak-check=full ./main 20	main.c:43
+.TE

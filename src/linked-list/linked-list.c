@@ -29,8 +29,10 @@
 
 static void freeListData(ListData *data)
 {
-	free(data->key); // l'unic que cal alliberar.
-	free(data); 
+	free (data->key);
+	free (data->count);
+	free (data->total);
+	free (data);
 }
 
 /**
@@ -209,34 +211,30 @@ void dumpList(List *l)
   */
 void inputList ( List * list, DataNode dn )
 {
-	int i;
-	ListData *listData;
+	ListData *ld;
 	int dia = dn.dia -1; // Ja que va de 1 fins a 7
 	char*desti = dn.desti;
 
 	/* Search if the key is in the tree */
-	listData = findList(list, desti);
+	ld = findList(list, desti);
 
-	if (listData)
+	if (ld)
 	{ // Existeix ja l'element
 		free (desti);
 
 	} else
 	{
-		listData = malloc(sizeof(ListData));
+		ld = malloc(sizeof(ListData));
 
-		listData->key = desti;	// Clau
+		ld->key = desti;	// Clau
 
-		for ( i = 6; i ; i-- )	// Contingut
-		{
-			listData->count[i] = 0;
-			listData->total[i] = 0;
-		}
+		ld->count = (int*) calloc ( 7, sizeof (int) ); // Contingut
+		ld->total = (int*) calloc ( 7, sizeof (int) );
 
-		insertList(list, listData);
+		insertList(list, ld);
 	}
 
 	// Actualitza la informació desitjada.
-	listData->count[dia]++;
-	listData->total[dia] += dn.retard;
+	ld->count[dia]++;
+	ld->total[dia] += dn.retard;
 }
