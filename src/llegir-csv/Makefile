@@ -1,16 +1,11 @@
-FILES_O = read.o
-
-# Exectuable to generate
-TARGET = read
+FILES_O = easyRead.o
 
 # Compilation options
 CFLAGS = -Wall -Werror -g
 
-# Linker options 
-LFLAGS = -lm
-
-read.o: read.c
-	gcc $(CFLAGS) read.c -c
+# Segon main
+easyRead.o: easyRead.c
+	gcc $(CFLAGS) easyRead.c -c
 
 clean:
 	rm $(FILES_O) -f

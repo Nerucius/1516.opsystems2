@@ -1,24 +1,38 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "llegir-csv/read.h"
-#include "llegir-csv/def.h"
-#include "arbre-binari/red-black-tree.h"
-#include "linked-list/linked-list.h"
+#include "llegir-csv/easyRead.h"
 
-int main ()
+int initMain ( int argc, char **argv )
 {
-	int lenght;
-	RBTree * tree;		// El abre que guardarem tota la informació.
-	DataNode * ListNR;	// La llista on guardarem tota la informació al llegir el fitxer.
+	switch ( argc )
+	{
+	case 1:
+		readInitFile ( "llegir-csv/file.csv" );
+		break;
+	case 2:
+		readInitFile ( argv[1] );
+		break;
+	case 3:
+		readInitFile ( argv[1] );
+		return atoi ( argv[2] );
+	default:
+		printf("Usage: [nameFile [lines]]\n");
+		exit(1);
+	}
+return 1000;
+}
 
-	// Llegeix tot el fitxer.
-	ListNR = readCSVfile ( "llegir-csv/file.csv", &lenght );
+int main(int argc, char **argv)
+{
+	int lecture;
+	int size;
+	char ** read;
 
-	// Insereix tot al arbre.
-	tree = inputTree ( ListNR, lenght );
+	lecture = initMain ( argc, argv );
+	read = readLines ( lecture, &size );
 
-/* Delete the tree */
-deleteTree(tree);
+printf ( "Retorn: %d\n", size );
+printf ( "%s\n", read[lecture]);
 return 0;
 }
