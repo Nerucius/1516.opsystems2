@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include "llegir-csv/easyRead.h"
 
@@ -11,6 +12,11 @@ int initMain ( int argc, char **argv )
 		readInitFile ( "llegir-csv/file.csv" );
 		break;
 	case 2:
+		if (isdigit ( argv[1][0] ) )
+		{
+			readInitFile ( "llegir-csv/file.csv" );
+			return atoi ( argv[1] );
+		}
 		readInitFile ( argv[1] );
 		break;
 	case 3:
@@ -33,6 +39,6 @@ int main(int argc, char **argv)
 	read = readLines ( lecture, &size );
 
 printf ( "Retorn: %d\n", size );
-printf ( "%s\n", read[lecture]);
+printf ( "%s\n", read[--size]);
 return 0;
 }
