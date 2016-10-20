@@ -26,26 +26,32 @@ return out;
 }
 
 
+
+
 /**
   * Llegeix les línies indicades a size i ho retorna.
   * Escriu quantes línies ha copiat a out.
   */
-char ** readLines ( int size, int *out )
+char ** readLines ( int requestCount, int *realCount, int *cont )
 {
 	int i;
 	char ** all;
 	char line[MAXCHAR];
 
-	all = ( char ** ) malloc ( size * sizeof (char *) );
+	all = ( char ** ) malloc ( requestCount * sizeof (char *) );
 
-	for ( i = 0; i < size; i++ )
+	for ( i = 0; i < requestCount; i++ )
 	{
 		if (fgets(line, MAXCHAR, fp) != NULL)
 			all[i] = copyMalloc ( line );
-		else break;
+		else
+		{
+			*cont = 0;
+			break;
+		}
 	}
 
-	*out = i;
+	*realCount = i;
 return all;
 }
 

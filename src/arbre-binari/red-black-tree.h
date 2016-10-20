@@ -29,7 +29,7 @@ typedef struct RBData_
   // This is the additional information that will be stored
   // within the structure. You may adapt it to your needs:
   // add or remove fields as you need.
-  List* llista;
+  void* llista;
 } RBData;
 
 /**
