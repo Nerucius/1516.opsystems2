@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 
+
+#include "../util.h"
+
 // Tamany maxim que llegirem per una línia.
 #define MAXCHAR  128
 
@@ -10,23 +13,6 @@
   * sense haber inicialitzat res.
   */
 FILE *fp;	// Serveix per a llegir el fitxer.
-
-
-
-/**
-  * Funció simple, per a simplificar el copiar amb malloc.
-  *
-  * El més 1 del malloc és per guardar el final.
-  */
-char * copyMalloc ( char * in )
-{
-	char * out = (char *) malloc ( sizeof (char) * (strlen(in) + 1) );
-	strcpy ( out, in );
-return out;
-}
-
-
-
 
 /**
   * Llegeix les línies indicades a size i ho retorna.
@@ -45,8 +31,10 @@ char ** readLines ( int requestCount, int *realCount, int *cont )
 		if (fgets(line, MAXCHAR, fp) != NULL)
 			all[i] = copyMalloc ( line );
 		else
-		{
+		{ // Realloc molt útil, ja que suposant que realCount = 0, alliverarà automaticament el malloc.
+			all = realloc ( all, i * sizeof (char *) );
 			*cont = 0;
+			fclose (fp); // Tanquem el fitxer.
 			break;
 		}
 	}

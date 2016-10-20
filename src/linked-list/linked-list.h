@@ -1,7 +1,7 @@
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H
 
-#include "../llegir-csv/def.h"
+#include "../def.h"
 /**
  *
  * Linked-list header 

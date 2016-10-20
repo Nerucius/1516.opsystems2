@@ -1,7 +1,7 @@
 # Genera els executables i el main per a que pugui ser executat.
 
 # Fitxers externs a compilar
-FILES_O_OUT = llegir-csv/easyRead.o hash/hash.o
+FILES_O_OUT = llegir-csv/easyRead.o hash/hash.o util.o
 #linked-list/
 
 # Compilation options
@@ -26,7 +26,7 @@ main.o: main.c
 llegir-csv/easyRead.o: llegir-csv/easyRead.c
 	cd llegir-csv; make clean; make easyRead.o
 hash/hash.o: hash/hash.c
-	cd hash; make clean; make hash/hash.o
+	cd hash; make clean; make hash.o
 
 
 clean:

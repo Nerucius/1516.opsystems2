@@ -5,6 +5,7 @@
 #include "llegir-csv/easyRead.h"
 #include "hash/hash.h"
 #include "util.h"
+#include "linked-list/linked-list.h"
 
 int initMain ( int argc, char **argv )
 {
@@ -31,24 +32,50 @@ int initMain ( int argc, char **argv )
 	return 1000;
 }
 
-List** linesIntoHashTable (char** lines, int count){
+DataNode createNode ( char **elements )
+{
+	DataNode n;
+//printf ("origen: %s\tdesti: %s\tsetmana: %s\tretard: %s\n", elements[16], elements[17], elements[3], elements[14]);
+//	n.origen = 
+return n;
+}
+
+List ** linesIntoHashTable (char** lines, int count)
+{
 	int i;
 	List** hashTable;
+//	int hash;
+	char *splits[CSV_COLS]; // El separador CSV per columnes.
 	
-	hashTable = calloc(HASH_SIZE, sizeof(List*));
 	
-	for (i = 0; i < count; i++){
+	for (i = 0; i < count; i++)
+	{
 		// Split the line
-		char** splits = splitLine(lines[i], ',');
+		splitLine(lines[i], splits, ',');
 		
-		DataNode node = createNode ( splits );
-		hash = hashCode(node.origen);
- 		hashTable[hash] = inputList();
+		createNode ( splits );
+
+//		hash = hashCode(node.origen);
+	//	hashCode(node.origen);
+ 		//hashTable[hash] = inputList();
 		// TODO Create inputList()
-		
+
+		free ( lines[i] );
 	}
-	
+
+	hashTable = calloc (HASH_SIZE, sizeof(List*));
+	free ( lines );
 	return hashTable;
+}
+
+void addListIntoTree ( List **listHash )
+{
+	/*int i = HASH_SIZE;
+	while ( i-- )
+		if ( listHash[i] )
+			free ( listHash[i] );
+	*/
+	free ( listHash );
 }
 
 int main(int argc, char **argv)
@@ -56,22 +83,22 @@ int main(int argc, char **argv)
 	int lecture;
 	int size, cont = 1;
 	char** linesRead;
-	
-
-	
+	List ** listHash;
 		
 	lecture = initMain ( argc, argv );
 	
+
 	while(cont)
 	{
 		linesRead = readLines (lecture, &size, &cont);
 		
-		if(size){
-			linesIntoHashTable(linesRead, size)
-			//printf ( "%s\n", read[--size]);
-			//hash = hashCode();
-		}
-		break;
+		if( !size ) break;
+
+		listHash = linesIntoHashTable (linesRead, size);
+		//printf ( "%s\n", read[--size]);
+		//hash = hashCode();
+
+		addListIntoTree ( listHash );
 	}
 
 	//printf ( "Retorn: %d\n", size );
