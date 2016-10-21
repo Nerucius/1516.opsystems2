@@ -8,7 +8,7 @@
 typedef struct {
     int dia;    // Dia, conté valors entre 1 i 7, on 1 és el dilluns i 7 diumenge.
     int retard;    // Els minuts de retard en arribar a destinació.
-    char *origen;    // Origen del vol en IATA
-    char *desti;    // Desti del vol en IATA
+    char *origen;    // Origen del vol en IATA. Tamany de 3 fixat.
+    char *desti;    // Desti del vol en IATA. Tamany aleatori.
 } DataNode;
 #endif /* DEF_H */

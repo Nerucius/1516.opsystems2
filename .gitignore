@@ -1,6 +1,12 @@
 # GITIGNORE FILE
+
+# temporal output vim
 *.swp
+
+# output objects in c
 *.o
 a.out
 
-# Per defecte al compilar ajuda del profe
+# output compile, exept Makefile
+src/bin
+!src/bin/Makefile
