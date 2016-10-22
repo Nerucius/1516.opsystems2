@@ -21,8 +21,16 @@ int initMain ( int argc, char **argv )
 	case 2: // Si posa una entrada,
 		if (isdigit ( argv[1][0] ) )
 		{ // i es digit, llegira en base el dígit.
+			argc = atoi ( argv[1] );
+			if ( !argc )
+			{
+				printf ("S'ha de llegir un nombre de línies.\n");
+				printf ("Ha entrat: %d\n", argc);
+				exit (7);
+			}
+			// Posem el read al final, per evitar problemes. Ja que si entres un zero donaria un alloc.
 			readInitFile ( "../llegir-csv/file.csv" );
-			return atoi ( argv[1] );
+			return argc;
 		} // Sino, llegira el fitxer indicat.
 		readInitFile ( argv[1] );
 		break;
@@ -52,12 +60,58 @@ DataNode createNode ( char **elements )
 return n;
 }
 
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/**
+  * Funció especialitzada en afegir un element dins la llista.
+  *
+  * FUNCIO CREC JO DE NOMÉS LLISTA !!!!!!!!!!!!!!!!!
+  */
+List * inputElementInList( List * list, char *key, int dia, int retard)
+{
+	ListData * ld;
+
+	// En cas que no existeixi la llista.
+	if ( !list )
+	{
+		list = (List *) malloc ( sizeof (List) );
+		initList ( list );
+	}
+
+	/* Search if the key is in the list */
+	ld = findList (list, key);
+
+	// Toca alliverar la memòria exedent.
+	if ( ld )
+	{
+		free (key);
+	} else
+	{ // Toca generar un ListData.
+		ld = (ListData *) malloc ( sizeof (ListData) );
+
+		// Definim la clau.
+		ld->key = key;
+
+		// Ens assegurem inicialitzar els valors a zero (calloc).
+		ld->count = (int *) calloc ( 7, sizeof (int) ); // Contador de vegades.
+		ld->total = (int *) calloc ( 7, sizeof (int) ); // Total del retard.
+
+		// Afegim la data dins de la llista.
+		insertList (list, ld);
+	}
+
+	// Actualitzem la informació.
+	ld->count[dia -1]++;
+	ld->total[dia -1] += retard;
+return list;
+}
+
+
 /**
   * 2n apartat de l'enunciat de la pràctica 2.
   * Fet tot això en una sola funció per l'enunciat de la pràctica 2.
   *
   * Encarregat de: - traduir el text - fer un hash - omplir la taula amb llistes -
-  * 
+  *
   * Retorna una llista de List.
   */
 List ** linesIntoHashTable (char** lines, int count)
@@ -78,7 +132,7 @@ List ** linesIntoHashTable (char** lines, int count)
 	{
 		// Split the line
 		splitLine(lines[i], splits, ',');
-		
+
 		// Generem la informació un cop fet l'esplit.
 		node = createNode ( splits );
 		free ( lines[i] );	// Alliberem l'estring usat. No ho podem fer abans, ja que fem anar splits.
@@ -86,17 +140,21 @@ List ** linesIntoHashTable (char** lines, int count)
 		keyList = node.origen; // Definim la nova clau per operar.
 
 		// Ens assegurem que origen no és diferent de 3. (enunciat pràctica 1)
-		if ( strlen (keyList) != 3 ) continue;
+		if ( strlen (keyList) != 3 )
+		{ // Ens toca alliberar la memòria.
+			free ( node.origen );
+			free ( node.desti );
+			continue;
+		}
 
 		// Fem anar la funció hash.
 		hash = hashCode(keyList);
 
 		// Redefinim keyList, ja que el canviarem de tamany. +4 = 3 origen + 1 del zero final.
 		keyList = encadenar2strings ( keyList, node.desti );
-		free (keyList); //!!!!!!!!!!!!!!!!!!! Només pel valgrid.
-		hashTable[hash] = 0; // Perque el compilador no se queixi.
- 		//hashTable[hash] = inputList( hashTable[hash], )
-		// TODO Create inputList()
+
+		// Afegim un element a la llista.
+ 		hashTable[hash] = inputElementInList( hashTable[hash], keyList, node.dia, node.retard);
 	}
 
 	free ( lines ); // Alliberem la llista d'estrings.
@@ -105,39 +163,52 @@ List ** linesIntoHashTable (char** lines, int count)
 
 void addListIntoTree ( List **listHash )
 {
-	/*int i = HASH_SIZE;
+	int i = HASH_SIZE;
 	while ( i-- )
 		if ( listHash[i] )
-			free ( listHash[i] );
-	*/
+			deleteList ( listHash[i] );
 //printf ("free: %p\n", listHash );
 	free ( listHash );
 }
 
+/**
+  * Programa comprovat amb diferents estats el valgrind.
+  * Per exemple "./main 0", "./main -5", "./main 30000" i fins i tot "./main 1"
+  *
+  * Procesa moltes dades estil CSV d'un màmim de 28 columnes.
+  * Primer només llegeix el fitxer.
+  * Tot seguit els posa en un array de llistes per una funció hash.
+  * I finalment afegeix els elements en un abre valansejat.
+  *
+  * Esperem amb la continuació del problema aprendre a programar amb multifils (threads).
+  */
 int main(int argc, char **argv)
 {
-	int lecture;
-	int size, cont = 1;
-	char** linesRead;
-	List ** listHash;
-		
-	lecture = initMain ( argc, argv );
-	
+	int lecture;		// Nombre de línies en que llegirà el fitxer. (primer apartat de la pràctica 2).
+	int size, loop = 1;	// Tamany real llegit i per a saber si continuar dins del bucle.
+	char** linesRead;	// Llista on hi ha les N línies llegides.
+	List ** listHash;	// Array de llistes amb el format del hash.
 
-	while(cont)
+	// Hem fet tot el control del main inicial en una funció externa. Per fer-ho visualment més agradable.
+	lecture = initMain ( argc, argv );
+
+	// M'entres hi hagi línies per a llegir.
+	while(loop)
 	{
-		linesRead = readLines (lecture, &size, &cont);
-		
+		// Primer apartat de l'enunciat: Lectura de N línies del fitxer.
+		linesRead = readLines (lecture, &size, &loop);
+
+		// Si el tamany és zero, ni ens esforçem a continuar, sortim directament.
 		if( !size ) break;
 
+		// Segon apartat de l'enunciat: Incerció de dades a la taula hash.
 		listHash = linesIntoHashTable (linesRead, size);
 		//printf ( "%s\n", read[--size]);
 
 //printf ("Entrant al 3er apartat\n");
+		// Per acabar el segon enunciat: Inserció de dades a l'abre binari.
 		addListIntoTree ( listHash );
 	}
 
-	//printf ( "Retorn: %d\n", size );
-	//printf ( "%s\n", read[--size]);
 	return 0;
 }
