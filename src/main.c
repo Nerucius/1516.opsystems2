@@ -115,19 +115,7 @@ void inputElementsInList( List * list, char * key, int *dia, int * retard )
 	/* Search if the key is in the tree */
 	ld = findList(list, key);
 
-	if ( ld )
-	{
-		// Actualitzem la informació.
-		for ( i = 6;  i--; )
-		{
-			ld->count[i] += dia[i];
-			ld->total[i] += retard[i];
-		}
-
-		// Alliberem en memòria.
-		free ( dia );
-		free ( retard );
-	} else
+	if ( !ld )
 	{
 		ld = malloc (sizeof (ListData) );
 
@@ -135,11 +123,19 @@ void inputElementsInList( List * list, char * key, int *dia, int * retard )
 		ld->key = copyMalloc (key);
 
 		// Contingut.
-		ld->count = dia;
-		ld->total = retard;
+		// Ens assegurem inicialitzar els valors a zero (calloc).
+		ld->count = (int *) calloc ( 7, sizeof (int) ); // Contador de vegades.
+		ld->total = (int *) calloc ( 7, sizeof (int) ); // Total del retard.
 
 		// Insertem el listData.
 		insertList ( list, ld );
+	}
+
+	// Actualitzem la informació.
+	for ( i = 6;  i--; )
+	{
+		ld->count[i] += dia[i];
+		ld->total[i] += retard[i];
 	}
 
 }
@@ -253,16 +249,12 @@ void addListIntoTree ( RBTree * tree, List **listHash )
 			// Afegim l'informació a list.
 			inputElementsInList( treeData->llista, desti, listData->count, listData->total);
 
-			// Alliberem en memòria.
-			free ( origen );
-
 			// Seleccionem el seguent element.
 			current = current->next;
 
-			free (listData);
 		}
+		deleteList ( listH );
 
-		//free ( listH );
 	}
 //printf ("free: %p\n", listHash );
 	free ( listHash );
