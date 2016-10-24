@@ -1,5 +1,5 @@
 #include "../linked-list/linked-list.h"
-#include "../llegir-csv/def.h"
+//#include "../llegir-csv/def.h"
 
 /**
  *

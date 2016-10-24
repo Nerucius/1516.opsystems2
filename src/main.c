@@ -7,6 +7,8 @@
 #include "hash/hash.h"
 #include "util.h"
 #include "linked-list/linked-list.h"
+#include "linked-list/linked-list.h"
+#include "arbre-binari/red-black-tree.h"
 
 /**
   * Funció per simplificar el codi del main, tot i donar-li tota la funcionalitat.
@@ -105,6 +107,43 @@ List * inputElementInList( List * list, char *key, int dia, int retard)
 return list;
 }
 
+void inputElementsInList( List * list, char * key, int *dia, int * retard )
+{
+	int i;
+	ListData *ld;
+
+	/* Search if the key is in the tree */
+	ld = findList(list, key);
+
+	if ( ld )
+	{
+		// Actualitzem la informació.
+		for ( i = 6;  i--; )
+		{
+			ld->count[i] += dia[i];
+			ld->total[i] += retard[i];
+		}
+
+		// Alliberem en memòria.
+		free ( dia );
+		free ( retard );
+	} else
+	{
+		ld = malloc (sizeof (ListData) );
+
+		// Clau.
+		ld->key = copyMalloc (key);
+
+		// Contingut.
+		ld->count = dia;
+		ld->total = retard;
+
+		// Insertem el listData.
+		insertList ( list, ld );
+	}
+
+}
+
 
 /**
   * 2n apartat de l'enunciat de la pràctica 2.
@@ -118,7 +157,6 @@ List ** linesIntoHashTable (char** lines, int count)
 {
 	int i;			// Pel loop.
 	List** hashTable;	// La llista a retornar.
-//	List* list;		// Per simplificar al treballar amb llistes.
 	int hash;		// La clau hash.
 	char *splits[CSV_COLS];	// El separador CSV per columnes.
 	char *keyList;		// La clau que farem anar per la llista.
@@ -161,12 +199,71 @@ List ** linesIntoHashTable (char** lines, int count)
 	return hashTable;
 }
 
-void addListIntoTree ( List **listHash )
+void addListIntoTree ( RBTree * tree, List **listHash )
 {
-	int i = HASH_SIZE;
+	ListItem *current;
+	ListData * listData;	// Simplifica el codi.
+	List * listH, *listT;	// Simplifica el codi.
+	RBData * treeData;	// Node del abre, per a poder treballar comodament
+	int i = HASH_SIZE;	// Comptador, per a recorre tota la llista hash.
+	char * origen;		// Origen del vol.
+	char * desti;		// Desti del vol.
+	char tmp;		// Fet per treure els 2 strings.
+
 	while ( i-- )
-		if ( listHash[i] )
-			deleteList ( listHash[i] );
+	{
+		listH = listHash[i];
+		// Ens asegurem que hi ha algun element.
+		if ( !listH ) continue;
+
+		// Recorrem tots els elements de la llista.
+		current = listH->first;
+		while ( current )
+		{
+			listData = current->data;
+			origen = listData->key;
+			desti = origen + 3;
+
+			// Simulem l'origen.
+			tmp = *desti;
+			*desti = '\0';
+
+			treeData = findNode ( tree, origen );
+
+			if ( !treeData )
+			{
+				// Reservem memòria per el nou node del abre.
+				treeData = (RBData *) malloc ( sizeof (RBData) );
+
+				// Clau.
+				treeData->key = copyMalloc ( origen );
+
+				// Contingut.
+				listT = (List *) malloc ( sizeof(List) );
+				initList (listT);
+				treeData->llista = listT;
+
+				// Afegim el node al abre.
+				insertNode (tree, treeData);
+			}
+
+			// Recuperem el desti.
+			*desti = tmp;
+
+			// Afegim l'informació a list.
+			inputElementsInList( treeData->llista, desti, listData->count, listData->total);
+
+			// Alliberem en memòria.
+			free ( origen );
+
+			// Seleccionem el seguent element.
+			current = current->next;
+
+			free (listData);
+		}
+
+		//free ( listH );
+	}
 //printf ("free: %p\n", listHash );
 	free ( listHash );
 }
@@ -188,9 +285,16 @@ int main(int argc, char **argv)
 	int size, loop = 1;	// Tamany real llegit i per a saber si continuar dins del bucle.
 	char** linesRead;	// Llista on hi ha les N línies llegides.
 	List ** listHash;	// Array de llistes amb el format del hash.
+	RBTree * tree;		// Estructura del abre binari.
 
 	// Hem fet tot el control del main inicial en una funció externa. Per fer-ho visualment més agradable.
 	lecture = initMain ( argc, argv );
+
+	/* Allocate memory for tree */
+	tree = (RBTree *) malloc(sizeof(RBTree));
+
+	/* Initialize the tree */
+	initTree(tree);
 
 	// M'entres hi hagi línies per a llegir.
 	while(loop)
@@ -207,8 +311,10 @@ int main(int argc, char **argv)
 
 //printf ("Entrant al 3er apartat\n");
 		// Per acabar el segon enunciat: Inserció de dades a l'abre binari.
-		addListIntoTree ( listHash );
+		addListIntoTree ( tree, listHash );
 	}
+
+deleteTree(tree);
 
 	return 0;
 }

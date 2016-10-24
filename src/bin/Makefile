@@ -1,10 +1,10 @@
 # Genera els executables i el main per a que pugui ser executat.
 
 # Fitxers externs a compilar per separat.
-FILES_O_OUT = ../llegir-csv/easyRead.o ../hash/hash.o ../util.o ../main.o
+FILES_O_OUT = ../llegir-csv/easyRead.c ../hash/hash.c ../util.c ../main.c ../arbre-binari/red-black-tree.c
 
 # Quan unim tots els fitxers.
-FILES_O_IN  = easyRead.o hash.o util.o main.o linked-list.o
+FILES_O_IN  = easyRead.o hash.o util.o main.o linked-list.o red-black-tree.o
 
 # Compilation options
 CFLAGS = -Wall -Werror -g
@@ -33,7 +33,8 @@ util.o: ../util.c Makefile
 	gcc $(CFLAGS) -c ../util.c
 linked-list.o: ../linked-list/linked-list.c Makefile
 	gcc $(CFLAGS) -c ../linked-list/linked-list.c
-
+red-black-tree.o: ../arbre-binari/red-black-tree.c Makefile
+	gcc $(CFLAGS) -c ../arbre-binari/red-black-tree.c
 
 # Elimina tot el generat
 clean:
