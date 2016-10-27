@@ -5,6 +5,11 @@
 // Seed per a fer el nostre hash.
 #define SEED 131
 
+/**
+  * Funció per a extreure la clau de l'element.
+  *
+  * Funció copiada exactament al exemple donat.
+  */
 int hashCode (char* str)
 {
 	int sum, seed, i, len;

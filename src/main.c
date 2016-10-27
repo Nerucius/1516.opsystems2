@@ -3,11 +3,19 @@
 #include <ctype.h>
 #include <string.h>
 
-#include "llegir-csv/easyRead.h"
-#include "hash/hash.h"
+// Serveix per a fer funcionalitats generals. Dedicat a treballar amb strings.
 #include "util.h"
+
+// Té una funció per a poder treballar amb la hash table.
+#include "hash/hash.h"
+
+// Llegeix el fitxer indicat.
+#include "llegir-csv/easyRead.h"
+
+// Té la funcionalitat bàsica d'una llista.
 #include "linked-list/linked-list.h"
-#include "linked-list/linked-list.h"
+
+// Té la funcionalitat bàsica d'un abre binari.
 #include "arbre-binari/red-black-tree.h"
 
 /**
@@ -18,7 +26,7 @@ int initMain ( int argc, char **argv )
 	switch ( argc )
 	{
 	case 1: // Quan no indica res, per defecte.
-		readInitFile ( "../llegir-csv/file.csv" );
+		readInitFile ( "file.csv" );
 		break;
 	case 2: // Si posa una entrada,
 		if (isdigit ( argv[1][0] ) )
@@ -31,7 +39,7 @@ int initMain ( int argc, char **argv )
 				exit (7);
 			}
 			// Posem el read al final, per evitar problemes. Ja que si entres un zero donaria un alloc.
-			readInitFile ( "../llegir-csv/file.csv" );
+			readInitFile ( "file.csv" );
 			return argc;
 		} // Sino, llegira el fitxer indicat.
 		readInitFile ( argv[1] );
@@ -62,11 +70,11 @@ DataNode createNode ( char **elements )
 return n;
 }
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 /**
   * Funció especialitzada en afegir un element dins la llista.
   *
-  * FUNCIO CREC JO DE NOMÉS LLISTA !!!!!!!!!!!!!!!!!
+  * Amb entrada, la clau, per a diferenciar-se entre els seus elements.
+  * Amb el seu contingut, que aquí són el dia i retard.
   */
 List * inputElementInList( List * list, char *key, int dia, int retard)
 {
@@ -107,6 +115,12 @@ List * inputElementInList( List * list, char *key, int dia, int retard)
 return list;
 }
 
+/**
+  * Funció per afegir elements en la llista.
+  *
+  * Amb entrada, la clau per a diferenciar-se.
+  * També amb les llistes del seu contingut.
+  */
 void inputElementsInList( List * list, char * key, int *dia, int * retard )
 {
 	int i;
@@ -253,10 +267,11 @@ void addListIntoTree ( RBTree * tree, List **listHash )
 			current = current->next;
 
 		}
+		// Alliberem la memòria de la llista extreta de la taula hash.
 		deleteList ( listH );
 
 	}
-//printf ("free: %p\n", listHash );
+	// Alliberem la taula hash, ja que em extret tota la seva informació.
 	free ( listHash );
 }
 
@@ -281,6 +296,11 @@ int main(int argc, char **argv)
 
 	// Hem fet tot el control del main inicial en una funció externa. Per fer-ho visualment més agradable.
 	lecture = initMain ( argc, argv );
+	if ( lecture <= 0 )
+	{
+		printf ("Ha de ser un valor positiu. Heu entrat: %d\n", lecture );
+		exit (3);
+	}
 
 	/* Allocate memory for tree */
 	tree = (RBTree *) malloc(sizeof(RBTree));
@@ -301,12 +321,11 @@ int main(int argc, char **argv)
 		listHash = linesIntoHashTable (linesRead, size);
 		//printf ( "%s\n", read[--size]);
 
-//printf ("Entrant al 3er apartat\n");
 		// Per acabar el segon enunciat: Inserció de dades a l'abre binari.
 		addListIntoTree ( tree, listHash );
 	}
 
+// alliberem la memoria del abre binari.
 deleteTree(tree);
-
-	return 0;
+return 0;
 }
