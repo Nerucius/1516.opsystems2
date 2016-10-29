@@ -1,7 +1,6 @@
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H
 
-#include "../def.h"
 /**
  *
  * Linked-list header 
@@ -83,5 +82,5 @@ void dumpList(List *l);
 
 
 // Implementat per nosaltres.
-void inputList ( List * list, DataNode dn ); // Afegeix un node a la llista.
+//void inputList ( List * list, DataNode dn ); // Afegeix un node a la llista.
 #endif /* LINKED_LIST_H */

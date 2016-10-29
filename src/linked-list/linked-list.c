@@ -205,36 +205,3 @@ void dumpList(List *l)
 
   printf("Total number of items: %d\n", l->numItems);
 }
-
-/**
-  * Afegeix correctament la informació dins la llista.
-  */
-void inputList ( List * list, DataNode dn )
-{
-	ListData *ld;
-	int dia = dn.dia -1; // Ja que va de 1 fins a 7
-	char*desti = dn.desti;
-
-	/* Search if the key is in the tree */
-	ld = findList(list, desti);
-
-	if (ld)
-	{ // Existeix ja l'element
-		free (desti);
-
-	} else
-	{
-		ld = malloc(sizeof(ListData));
-
-		ld->key = desti;	// Clau
-
-		ld->count = (int*) calloc ( 7, sizeof (int) ); // Contingut
-		ld->total = (int*) calloc ( 7, sizeof (int) ); // Calloc inicialitza tot a zero tal i com desitjem.
-
-		insertList(list, ld);
-	}
-
-	// Actualitza la informació desitjada.
-	ld->count[dia]++;
-	ld->total[dia] += dn.retard;
-}

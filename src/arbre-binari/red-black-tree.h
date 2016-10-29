@@ -1,5 +1,5 @@
-#include "../linked-list/linked-list.h"
-//#include "../llegir-csv/def.h"
+#ifndef RED_BLACK_H
+#define RED_BLACK_H
 
 /**
  *
@@ -29,7 +29,7 @@ typedef struct RBData_
   // This is the additional information that will be stored
   // within the structure. You may adapt it to your needs:
   // add or remove fields as you need.
-  void* llista;
+  void* data;
 } RBData;
 
 /**
@@ -77,4 +77,6 @@ void deleteTree(RBTree *tree);
 /*
  * per nosaltres
  */
-RBTree* inputTree ( DataNode * ListNR, int lenght ); // A partir d'una llista, afegeix a l'abre els elements.
+//RBTree* inputTree ( DataNode * ListNR, int lenght ); // A partir d'una llista, afegeix a l'abre els elements.
+
+#endif /* RED_BLACK_H */

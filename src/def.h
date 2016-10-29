@@ -11,4 +11,5 @@ typedef struct {
     char *origen;    // Origen del vol en IATA. Tamany de 3 fixat.
     char *desti;    // Desti del vol en IATA. Tamany aleatori.
 } DataNode;
+
 #endif /* DEF_H */

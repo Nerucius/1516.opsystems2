@@ -37,11 +37,10 @@
  * by the user code, just before the node is inserted in the tree. 
  *
  */
-
 static void freeRBData(RBData *data)
 {
 	free (data->key);
-	deleteList(data->llista);
+	deleteList(data->data);//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	free(data);
 }
 
@@ -54,13 +53,8 @@ static void freeRBData(RBData *data)
 
 static int compLT(TYPE_RBTREE_KEY key1, TYPE_RBTREE_KEY key2)
 {
-  int rc;
-
-  rc = strcmp ( key1, key2 );
-
-  if ( rc < 0 )
-    return 1;
-
+  if ( strcmp ( key1, key2 ) == -1 )
+  	return 1;
   return 0;
 }
 
@@ -70,17 +64,11 @@ static int compLT(TYPE_RBTREE_KEY key1, TYPE_RBTREE_KEY key2)
  * is satisfied, 0 (false) otherwise.
  *
  */
-
 static int compEQ(TYPE_RBTREE_KEY key1, TYPE_RBTREE_KEY key2)
 {
-  int rc;
-
-  rc = strcmp ( key1, key2 );
-
-  if (rc == 0)
-    return 1;
-
-  return 0;
+  if ((strcmp ( key1, key2 )))
+  	return 0;
+  return 1;
 }
 
 /**
@@ -99,7 +87,6 @@ static Node sentinel = { NIL, NIL, 0, BLACK, NULL};
  * 
  *
  */
-
 void initTree(RBTree *tree)
 {
   tree->root = NIL;
@@ -111,7 +98,6 @@ void initTree(RBTree *tree)
  *  function is used internally by other functions.
  *
  */
-
 static void rotateLeft(RBTree *tree, Node *x) {
 
   Node *y = x->right;
@@ -142,7 +128,6 @@ static void rotateLeft(RBTree *tree, Node *x) {
  *  function is used internally by other functions.
  *
  */
-
 static void rotateRight(RBTree *tree, Node *x) {
   Node *y = x->left;
 
@@ -173,7 +158,6 @@ static void rotateRight(RBTree *tree, Node *x) {
  * functions.
  *
  */
-
 static void insertFixup(RBTree *tree, Node *x) {
   /* check Red-Black properties */
   while (x != tree->root && x->parent->color == RED) {
@@ -236,7 +220,6 @@ static void insertFixup(RBTree *tree, Node *x) {
  * overwritten after calling this function.
  *
  */
-
 void insertNode(RBTree *tree, RBData *data) {
   Node *current, *parent, *x;
 
@@ -291,7 +274,6 @@ void insertNode(RBTree *tree, RBData *data) {
  *  Returns NULL if not found.
  *
  */
-
 RBData *findNode(RBTree *tree, TYPE_RBTREE_KEY key) {
 
   Node *current = tree->root;
@@ -310,7 +292,6 @@ RBData *findNode(RBTree *tree, TYPE_RBTREE_KEY key) {
  *  Function used to delete a tree. Do not call directly. 
  *
  */
-
 static void deleteTreeRecursive(Node *x)
 {
   if (x->left != NIL)
@@ -336,70 +317,4 @@ void deleteTree(RBTree *tree)
   if (tree->root != NIL)
     deleteTreeRecursive(tree->root);
   free (tree);
-}
-
-
-/**
-  * Fa el necessari per afegir la informació.
-  * En cas de no existir el node, el crea.
-  * En cas d'existir, allivera la memòria. Tot i actualitzar la llista.
-  * Per l'enunciat del pdf, només agafarem aquells que l'origen és 3 de llarg.
-  */
-void inputElementTree ( RBTree * tree, DataNode dn )
-{
-	RBData * treeData;	// Node del abre, per a poder treballar comodament.
-	List *list;		// Llista, el que conté l'abre.
-
-	char *origen = dn.origen;
-	if ( strlen (origen) != 3 )
-	{ // 3.2 apartat 4 ho demana
-		free (origen);
-		free (dn.desti);
-	} else
-	{
-		treeData = findNode (tree, origen);
-		if ( treeData )
-		{ // Ja existeix, alliverem la memoria.
-			free ( origen );
-		} else
-		{ // Sino, el generem.
-			// Clau.
-			treeData = malloc (sizeof(RBData));
-			treeData->key = origen;
-
-			// Contingut.
-			list = (List *) malloc(sizeof(List));
-			initList(list);
-			treeData->llista = list;
-
-			insertNode (tree, treeData);
-		}
-		inputList ( treeData->llista, dn );
-	}
-}
-
-/**
-  * A partir d'una llista de nodes,
-  * crea i posa els elements dins l'arbre, on retornara el punter.
-  *
-  * key = origen
-  *
-  * Contingut = llista
-  *	- key = desti
-  *	- contingut = meanWeek
-  */
-RBTree* inputTree ( DataNode * ListNR, int lenght )
-{
-	RBTree * tree;		// El abre que guardarem tota la informació.
-
-	/* Allocate memory for tree */
-	tree = (RBTree *) malloc(sizeof(RBTree));
-
-	/* Initialize the tree */
-	initTree(tree);
-
-	while ( lenght-- ) // Recorrerem tots els elements.
-		inputElementTree ( tree, ListNR[lenght] );
-free (ListNR);
-return tree;
 }

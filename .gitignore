@@ -10,3 +10,6 @@ a.out
 # output compile, exept Makefile
 src/bin
 !src/bin/Makefile
+
+# Post Script
+*.ps

@@ -3,20 +3,12 @@
 #include <ctype.h>
 #include <string.h>
 
-// Serveix per a fer funcionalitats generals. Dedicat a treballar amb strings.
-#include "util.h"
-
-// Té una funció per a poder treballar amb la hash table.
-#include "hash/hash.h"
-
-// Llegeix el fitxer indicat.
-#include "llegir-csv/easyRead.h"
-
-// Té la funcionalitat bàsica d'una llista.
-#include "linked-list/linked-list.h"
-
-// Té la funcionalitat bàsica d'un abre binari.
-#include "arbre-binari/red-black-tree.h"
+#include "def.h"				// Defineix el node
+#include "util.h"				// Serveix per a fer funcionalitats generals. Dedicat a treballar amb strings.
+#include "hash/hash.h"				// Té una funció per a poder treballar amb la hash table.
+#include "llegir-csv/easyRead.h"		// Llegeix el fitxer indicat.
+#include "linked-list/linked-list.h"		// Té la funcionalitat bàsica d'una llista.
+#include "arbre-binari/red-black-tree.h"	// Té la funcionalitat bàsica d'un abre binari.
 
 /**
   * Funció per simplificar el codi del main, tot i donar-li tota la funcionalitat.
@@ -251,7 +243,7 @@ void addListIntoTree ( RBTree * tree, List **listHash )
 				// Contingut.
 				listT = (List *) malloc ( sizeof(List) );
 				initList (listT);
-				treeData->llista = listT;
+				treeData->data = listT;
 
 				// Afegim el node al abre.
 				insertNode (tree, treeData);
@@ -261,7 +253,7 @@ void addListIntoTree ( RBTree * tree, List **listHash )
 			*desti = tmp;
 
 			// Afegim l'informació a list.
-			inputElementsInList( treeData->llista, desti, listData->count, listData->total);
+			inputElementsInList( treeData->data, desti, listData->count, listData->total);
 
 			// Seleccionem el seguent element.
 			current = current->next;

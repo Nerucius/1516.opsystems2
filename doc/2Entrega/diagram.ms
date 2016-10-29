@@ -1,3 +1,4 @@
+.% hol
 .PS
 down;
 ellipse "Inicialitza";
@@ -26,6 +27,7 @@ right;
 arrow "No" "";
 END: ellipse "final";
 
+.% Super xulo de comentari
 move to Fi .e;
 line to (END, Fi) "S\('i" "";
 arrow to END .s;
