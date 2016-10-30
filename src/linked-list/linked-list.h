@@ -77,7 +77,7 @@ void initList(List *l);
 void insertList(List *l, ListData *data);
 ListData *findList(List *l, TYPE_LIST_KEY key);
 void deleteFirstList(List *l);
-void deleteList(List *l);
+void deleteList(void *l);
 void dumpList(List *l);
 
 

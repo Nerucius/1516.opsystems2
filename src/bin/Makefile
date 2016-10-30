@@ -2,9 +2,7 @@
 # Millorar 54,852 allocs per defecte !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # Dependencies del main.
-LIBS_MAIN =	../util.c ../hash/hash.c ../llegir-csv/easyRead.c ../linked-list/linked-list.c \
-		../util.h ../hash/hash.h ../llegir-csv/easyRead.h ../linked-list/linked-list.h \
-		../arbre-binari/red-black-tree.c \
+LIBS_MAIN =	../util.h ../hash/hash.h ../llegir-csv/easyRead.h ../linked-list/linked-list.h \
 		../arbre-binari/red-black-tree.h \
 		../def.h
 

@@ -26,9 +26,6 @@
 
 #include "red-black-tree.h"
 
-/* Per a poder eliminar les llistes */
-#include "../linked-list/linked-list.h"
-
 /**
  *
  * Free data element. The user should adapt this function to their needs.  This
@@ -37,10 +34,10 @@
  * by the user code, just before the node is inserted in the tree. 
  *
  */
-static void freeRBData(RBData *data)
+static void freeRBData(RBData *data, void (*deleteData)(void *data))
 {
 	free (data->key);
-	deleteList(data->data);//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	deleteData(data->data);
 	free(data);
 }
 
@@ -50,7 +47,6 @@ static void freeRBData(RBData *data)
  * is satisfied, 0 (false) otherwise.
  *
  */
-
 static int compLT(TYPE_RBTREE_KEY key1, TYPE_RBTREE_KEY key2)
 {
   if ( strcmp ( key1, key2 ) == -1 )
@@ -77,7 +73,6 @@ static int compEQ(TYPE_RBTREE_KEY key1, TYPE_RBTREE_KEY key2)
  * PER FER LES PRACTIQUES NO CAL MODIFICAR EL CODI QUE HI HA A SOTA.
  *
  */
-
 #define NIL &sentinel           /* all leafs are sentinels */
 static Node sentinel = { NIL, NIL, 0, BLACK, NULL};
 
@@ -292,15 +287,15 @@ RBData *findNode(RBTree *tree, TYPE_RBTREE_KEY key) {
  *  Function used to delete a tree. Do not call directly. 
  *
  */
-static void deleteTreeRecursive(Node *x)
+static void deleteTreeRecursive(Node *x, void (*deleteData)(void *data))
 {
   if (x->left != NIL)
-    deleteTreeRecursive(x->left);
+    deleteTreeRecursive(x->left, deleteData);
 
   if (x->right != NIL)
-    deleteTreeRecursive(x->right);
+    deleteTreeRecursive(x->right, deleteData);
 
-  freeRBData(x->data);
+  freeRBData(x->data, deleteData);
   free(x);
 }
 
@@ -310,11 +305,12 @@ static void deleteTreeRecursive(Node *x)
  *  Delete a tree. All the nodes and all the data pointed to by
  *  the tree is deleted. 
  *
+ * Una modificació, deleteData, per evitar d'importar llibreries.
+ * Ens permet ser un programa més solid. Ja que podrà fer anar altres funcions sense coneixer-les directament.
  */
-
-void deleteTree(RBTree *tree)
+void deleteTree(RBTree *tree, void (*deleteData)(void *data))
 {
   if (tree->root != NIL)
-    deleteTreeRecursive(tree->root);
+    deleteTreeRecursive(tree->root, deleteData);
   free (tree);
 }

@@ -143,7 +143,6 @@ void inputElementsInList( List * list, char * key, int *dia, int * retard )
 		ld->count[i] += dia[i];
 		ld->total[i] += retard[i];
 	}
-
 }
 
 
@@ -318,6 +317,6 @@ int main(int argc, char **argv)
 	}
 
 // alliberem la memoria del abre binari.
-deleteTree(tree);
+deleteTree(tree, deleteList);
 return 0;
 }

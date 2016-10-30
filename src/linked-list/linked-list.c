@@ -167,8 +167,9 @@ void deleteFirstList(List *l)
  *
  */
 
-void deleteList(List *l)
+void deleteList(void *list)
 {
+  List *l = (List *) list;
   ListItem *current, *next;
 
   current = l->first;

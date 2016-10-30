@@ -19,7 +19,6 @@
  * tree. 
  *
  */
-
 typedef struct RBData_
 {
   // The variable used to index the tree has to be called "key".
@@ -33,11 +32,21 @@ typedef struct RBData_
 } RBData;
 
 /**
+  * Em afegit l'estructura que volem enmagatzemar.
+  *
+  * No ho possem dins del RBData, ja que estarà dins de List
+  */
+typedef struct
+{
+	int * dia;	// Enmagatzema els cops que ha entrat una dada. Per a poder generar la mitgana.
+	int * retard;	// Enmagatzema el retard total.
+} DataTree;
+
+/**
  *
  * The node structure 
  *
  */
-
 typedef enum { BLACK, RED } nodeColor;
 
 typedef struct Node_ {
@@ -67,11 +76,10 @@ typedef struct RBTree_ {
  * Function headers. Note that not all the functions of
  * red-black-tree.c have been included here.
  */
-
 void initTree(RBTree *tree);
 void insertNode(RBTree *tree, RBData *data);
 RBData *findNode(RBTree *tree, TYPE_RBTREE_KEY key); 
-void deleteTree(RBTree *tree);
+void deleteTree(RBTree *tree, void (*delayData)(void *data));
 
 
 /*
