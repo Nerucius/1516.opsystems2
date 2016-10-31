@@ -76,7 +76,7 @@ typedef struct RBTree_ {
  * Function headers. Note that not all the functions of
  * red-black-tree.c have been included here.
  */
-void initTree(RBTree *tree);
+RBTree * initTree();
 void insertNode(RBTree *tree, RBData *data);
 RBData *findNode(RBTree *tree, TYPE_RBTREE_KEY key); 
 void deleteTree(RBTree *tree, void (*delayData)(void *data));

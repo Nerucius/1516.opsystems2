@@ -55,14 +55,9 @@ static void dumpListData(ListData *data)
 
 static int compEQ(TYPE_LIST_KEY key1, TYPE_LIST_KEY key2)
 {
-  int rc;
-
-  rc = strcmp ( key1, key2 );
-
-  if (rc == 0 )
-    return 1;
-
-  return 0;
+	if (strcmp ( key1, key2 ))
+		return 0;
+	return 1;
 }
 
 /**

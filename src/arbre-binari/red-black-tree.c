@@ -82,9 +82,17 @@ static Node sentinel = { NIL, NIL, 0, BLACK, NULL};
  * 
  *
  */
-void initTree(RBTree *tree)
+RBTree * initTree()
 {
-  tree->root = NIL;
+	RBTree * tree = (RBTree *) malloc(sizeof(RBTree));
+	if ( !tree )
+	{
+		printf ("ERROR memory, 'initTree'\n");
+		exit (1);
+	}
+
+	tree->root = NIL;
+return tree;
 }
 
 /**

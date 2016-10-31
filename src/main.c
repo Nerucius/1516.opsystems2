@@ -293,11 +293,8 @@ int main(int argc, char **argv)
 		exit (3);
 	}
 
-	/* Allocate memory for tree */
-	tree = (RBTree *) malloc(sizeof(RBTree));
-
-	/* Initialize the tree */
-	initTree(tree);
+	/* Allocate memory for tree and Initialize the tree */
+	tree = initTree();
 
 	// M'entres hi hagi línies per a llegir.
 	while(loop)

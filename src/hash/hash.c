@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <string.h> 
 #include "hash.h"
 
 // Seed per a fer el nostre hash.
@@ -16,7 +15,7 @@ int hashCode (char* str)
 
 	sum = 0;
 	seed = SEED;
-	len = strlen ( str );
+	len = 3;	// Per l'enunciat 1, només són els 3 primers caràcters.
 
 	for(i = 0; i < len; i++)
 		sum = sum * seed + (int)str[i];
