@@ -14,5 +14,5 @@ void readInitFile ( char* name );
   * size és per a saber quantes línies desitja.
   * out escriurà el tamany real de la llista.
   */ 
-char ** readLines ( int requestCount, int *realCount, int *cont );
+char ** readLines ( int requestCount, int *realCount );
 #endif /* EASY_READ_H */

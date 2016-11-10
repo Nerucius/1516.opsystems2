@@ -18,12 +18,17 @@ FILE *fp;	// Serveix per a llegir el fitxer.
   * Llegeix les línies indicades a size i ho retorna.
   * Escriu quantes línies ha copiat a out.
   */
-char ** readLines ( int requestCount, int *realCount, int *cont )
+char ** readLines ( int requestCount, int *realCount )
 {
 	int i;
 	char ** all;
 	char line[MAXCHAR];
 
+	if ( !fp ) // Comprobar que no hemos cerrado el arxivo.
+	{
+		*realCount = 0;
+		return NULL;
+	}
 	all = ( char ** ) malloc ( requestCount * sizeof (char *) );
 
 	for ( i = 0; i < requestCount; i++ )
@@ -33,8 +38,8 @@ char ** readLines ( int requestCount, int *realCount, int *cont )
 		else
 		{ // Realloc molt útil, ja que suposant que realCount = 0, alliverarà automaticament el malloc.
 			all = realloc ( all, i * sizeof (char *) );
-			*cont = 0; // Ens permet saber quan acabem.
 			fclose (fp); // Tanquem el fitxer.
+			fp = NULL; // Assignar NULL
 			break;
 		}
 	}
@@ -42,8 +47,8 @@ char ** readLines ( int requestCount, int *realCount, int *cont )
 	// Retornem el nombre real de línies que hi ha a la llista.
 	*realCount = i;
 
-// Retorna el valor desitjat. Una llista d'arrays.
-return all;
+	// Retorna el valor desitjat. Una llista d'arrays.
+	return all;
 }
 
 /**

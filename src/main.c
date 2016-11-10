@@ -280,7 +280,7 @@ void addListIntoTree ( RBTree * tree, List **listHash )
 int main(int argc, char **argv)
 {
 	int lecture;		// Nombre de línies en que llegirà el fitxer. (primer apartat de la pràctica 2).
-	int size, loop = 1;	// Tamany real llegit i per a saber si continuar dins del bucle.
+	int size;		// Tamany real llegit i per a saber si continuar dins del bucle.
 	char** linesRead;	// Llista on hi ha les N línies llegides.
 	List ** listHash;	// Array de llistes amb el format del hash.
 	RBTree * tree;		// Estructura del abre binari.
@@ -297,13 +297,14 @@ int main(int argc, char **argv)
 	tree = initTree();
 
 	// M'entres hi hagi línies per a llegir.
-	while(loop)
+	while(1)
 	{
 		// Primer apartat de l'enunciat: Lectura de N línies del fitxer.
-		linesRead = readLines (lecture, &size, &loop);
+		linesRead = readLines (lecture, &size);
 
 		// Si el tamany és zero, ni ens esforçem a continuar, sortim directament.
-		if( !size ) break;
+		if( !size )
+			break;
 
 		// Segon apartat de l'enunciat: Incerció de dades a la taula hash.
 		listHash = linesIntoHashTable (linesRead, size);
