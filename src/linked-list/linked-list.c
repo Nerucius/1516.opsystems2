@@ -68,16 +68,34 @@ static int compEQ(TYPE_LIST_KEY key1, TYPE_LIST_KEY key2)
  */
 
 /**
- * 
  * Initialize an empty list
- *
  */
-
 void initList(List *l)
 {
   l->numItems = 0;
   l->first = NULL;
 }
+
+/**
+ * Create an empty, initialized list.
+ * @return List pointer to new list
+ */
+List* createList()
+{
+  List *l;
+  // Allocar memoria, error si no es pot
+  l = (List *) malloc ( sizeof (List) );
+  if ( !l )
+  {
+	  printf ("ERROR memory, 'createList'\n");
+	  exit (1);
+  }
+  initList(l);  
+  return l;
+}
+
+
+
 
 /**
  * 

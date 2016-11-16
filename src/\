@@ -68,17 +68,18 @@ return n;
   * Amb entrada, la clau, per a diferenciar-se entre els seus elements.
   * Amb el seu contingut, que aquí són el dia i retard.
   */
-List * inputElementInList( List * list, char *key, DataNode node)
+List * inputElementInList( List * list, char *key, int dia, int retard)
 {
 	ListData * ld;
 
 	// En cas que no existeixi la llista.
 	if ( !list )
 	{
-		list = initList ( list );
+		list = (List *) malloc ( sizeof (List) );
+		initList ( list );
 	}
 
-	// Search if the key is in the list
+	/* Search if the key is in the list */
 	ld = findList (list, key);
 
 	// Toca alliverar la memòria exedent.
@@ -175,8 +176,10 @@ List ** linesIntoHashTable (char** lines, int count)
 		node = createNode ( splits );
 		free ( lines[i] );	// Alliberem l'estring usat. No ho podem fer abans, ja que fem anar splits.
 
+		listKey = node.origen; // Definim la nova clau per operar.
+
 		// Ens assegurem que origen no és diferent de 3. (enunciat pràctica 1)
-		if ( strlen (node.origen) != 3 )
+		if ( strlen (listKey) != 3 )
 		{ // Ens toca alliberar la memòria.
 			free ( node.origen );
 			free ( node.desti );
@@ -184,13 +187,13 @@ List ** linesIntoHashTable (char** lines, int count)
 		}
 
 		// Fem anar la funció hash.
-		hash = hashCode(node.origen);
+		hash = hashCode(listKey);
 
 		// Redefinim listKey, ja que el canviarem de tamany. +4 = 3 origen + 1 del zero final.
-		listKey = encadenar2strings ( node.origen, node.desti );
+		listKey = encadenar2strings ( listKey, node.desti );
 
 		// Afegim un element a la llista.
- 		hashTable[hash] = inputElementInList( hashTable[hash], listKey, node);
+ 		hashTable[hash] = inputElementInList( hashTable[hash], listKey, node.dia, node.retard);
 	}
 
 	free ( lines ); // Alliberem la llista d'estrings.
