@@ -1,4 +1,6 @@
 # GITIGNORE FILE
+# Idea files
+.idea/
 
 # temporal output vim
 *.swp
