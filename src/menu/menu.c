@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "menu.h"
+#include "../serialize/serializer.h"
 
 Menu *menu_new() {
 	Menu *m = malloc(sizeof(Menu));
@@ -29,7 +30,8 @@ void menu_addItem(Menu *menu, char *item, void (*function)()) {
  * @return True if option is a valid option, otherwise false
  */
 int menu_chooseOption(Menu *menu, int opt) {
-
+	if(opt < 1 || opt >= menu->numItems)
+	    return 0
 	menu->items[opt-1].function();
 	return 1;
 }
@@ -37,27 +39,30 @@ int menu_chooseOption(Menu *menu, int opt) {
 
 /** Shows the menu, with a list of options and a prompt */
 void menu_show(Menu *menu) {
-	int i;
+    int i;
 
-	printf("\n--------------------");
-	printf("\nThis is a Menu");
+    printf("\n--------------------");
+    printf("\nSelecciona un Opcio:");
 
-	for (i = 0; i < menu->numItems; i++) {
+    for (i = 0; i < menu->numItems; i++) {
 
-		MenuItem mi = menu->items[i];
-		printf("\n%3d : %s", i + 1, mi.text);
-	}
-	
-	//int opt = -1;
-	//while(/* option not valid*/){
-	  //char* = gets("Seleccina Opcio: ");
-	//}
-	
+	  MenuItem mi = menu->items[i];
+	  printf("\n%3d : %s", i + 1, mi.text);
+    }
+    
+    
+    printf("\n--------------------");
 
-	printf("\n--------------------\n");
-	
-	
-	//menu_chooseOption(menu, 1);
+    int opt = -1;
+    while(!menu_chooseOption(menu, opt)){
+	printf("\nOpcio: ")
+	char in[8]
+	gets(in);
+	opt = atoi(in);
+    }
+    
+    
+
 }
 
 

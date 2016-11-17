@@ -3,7 +3,7 @@ CFLAGS = -Wall -Werror -g
 LIBS = -lm
 
 # Sources here
-SRCS = menuTest.c menu.c
+SRCS = menuTest.c menu.c ../serialize/serializer.c ../arbre-binari/red-black-tree.c
 OBJS = $(SRCS:.c=.o)
 
 # !!! Insert executable name here (.exe for win64) !!!
