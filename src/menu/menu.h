@@ -3,7 +3,7 @@
 
 typedef struct {
 	char *text;
-	void *function;
+	void (*function)();
 } MenuItem;
 
 typedef struct {
@@ -13,7 +13,7 @@ typedef struct {
 
 Menu* menu_new();
 
-void menu_addItem(Menu *menu, char *item, void *function);
+void menu_addItem(Menu *menu, char *item, void (*function)());
 
 void menu_show(Menu *menu);
 

@@ -75,7 +75,7 @@ List * inputElementInList( List * list, char *key, DataNode node)
 	// En cas que no existeixi la llista.
 	if ( !list )
 	{
-		list = initList ( list );
+		list = createList ();
 	}
 
 	// Search if the key is in the list

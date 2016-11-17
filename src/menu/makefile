@@ -11,7 +11,7 @@ MAIN = menuTest.exe
 
 all: $(MAIN)
 	@echo Compilation successful
-	make clean
+	# make clean
 
 # Main target depends on all other objects being compiled
 $(MAIN): $(OBJS)

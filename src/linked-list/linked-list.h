@@ -73,7 +73,7 @@ typedef struct List_ {
  *
  */
 
-List* createList(List *l);
+List* createList();
 void insertList(List *l, ListData *data);
 ListData *findList(List *l, TYPE_LIST_KEY key);
 void deleteFirstList(List *l);

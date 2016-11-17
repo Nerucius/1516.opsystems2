@@ -23,9 +23,9 @@ return out;
   * Perque pel destinatari farà un realloc ( només un free per aquest, però el esperat ).
   * I l'altre automaticament fa el free.
   */
-void encadenar2strings ( char * desti, char * text )
+char * encadenar2strings ( char * desti, char * text )
 {
-	desti = malloc (desti, sizeof(char) * (strlen (desti) + strlen (text) +1)); // +1, és per guardar el final de text.
+	desti = malloc (sizeof(char) * (strlen (desti) + strlen (text) +1)); // +1, és per guardar el final de text.
 	strcat ( desti, text );
 	// free (text);
 return desti;
