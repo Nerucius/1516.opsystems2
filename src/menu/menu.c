@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "menu.h"
-#include "../serialize/serializer.h"
 
 Menu *menu_new() {
 	Menu *m = malloc(sizeof(Menu));
@@ -14,14 +13,13 @@ Menu *menu_new() {
 
 /** Add a new Item to the menu with a callable function */
 void menu_addItem(Menu *menu, char *item, void (*function)()) {
-	//MenuItem *mItem = malloc(sizeof(MenuItem));
 	MenuItem mItem;
-  
+
 	mItem.text = item;
 	mItem.function = function;
 
 	// Resize items array to fit new entry
-	menu->items = (MenuItem*) realloc(menu->items, sizeof(MenuItem) * (menu->numItems + 1));
+	menu->items = (MenuItem *) realloc(menu->items, sizeof(MenuItem) * (menu->numItems + 1));
 	menu->items[menu->numItems] = mItem;
 	menu->numItems++;
 }
@@ -30,44 +28,45 @@ void menu_addItem(Menu *menu, char *item, void (*function)()) {
  * @return True if option is a valid option, otherwise false
  */
 int menu_chooseOption(Menu *menu, int opt) {
-	if(opt < 1 || opt >= menu->numItems)
-	    return 0
-	menu->items[opt-1].function();
+	if (opt < 1 || opt > menu->numItems) {
+		return 0;
+	}
+
+	menu->items[opt - 1].function();
 	return 1;
 }
 
 
 /** Shows the menu, with a list of options and a prompt */
 void menu_show(Menu *menu) {
-    int i;
+	int i;
 
-    printf("\n--------------------");
-    printf("\nSelecciona un Opcio:");
+	printf("\n--------------------------------");
+	printf("\nSelecciona una Opcio:");
 
-    for (i = 0; i < menu->numItems; i++) {
+	for (i = 0; i < menu->numItems; i++) {
 
-	  MenuItem mi = menu->items[i];
-	  printf("\n%3d : %s", i + 1, mi.text);
-    }
-    
-    
-    printf("\n--------------------");
+		MenuItem mi = menu->items[i];
+		printf("\n%3d : %s", i + 1, mi.text);
+	}
 
-    int opt = -1;
-    while(!menu_chooseOption(menu, opt)){
-	printf("\nOpcio: ")
-	char in[8]
-	gets(in);
-	opt = atoi(in);
-    }
-    
-    
+
+	printf("\n--------------------------------");
+	printf("\n");
+
+	int opt = -1;
+	while (!menu_chooseOption(menu, opt)) {
+		printf("Opcio: ");
+		char in[8];
+		gets(in);
+		opt = atoi(in);
+	}
+
 
 }
 
 
-
 void menu_delete(Menu *menu) {
-    free(menu->items);
-    free(menu);
+	free(menu->items);
+	free(menu);
 }

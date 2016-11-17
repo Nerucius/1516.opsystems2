@@ -11,7 +11,7 @@ typedef struct {
 	MenuItem *items;
 } Menu;
 
-Menu* menu_new();
+Menu *menu_new();
 
 void menu_addItem(Menu *menu, char *item, void (*function)());
 

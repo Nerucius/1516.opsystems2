@@ -1,6 +1,10 @@
 # GITIGNORE FILE
 # Idea files
 .idea/
+cmakelists.txt
+*.stackdump
+*.log
+*.dump
 
 # temporal output vim
 *.swp
