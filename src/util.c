@@ -25,10 +25,10 @@ return out;
   */
 char * encadenar2strings ( char * desti, char * text )
 {
-	desti = malloc (sizeof(char) * (strlen (desti) + strlen (text) +1)); // +1, és per guardar el final de text.
-	strcat ( desti, text );
-	// free (text);
-return desti;
+	char *out = malloc (sizeof(char) * (strlen (desti) + strlen (text) +1)); // +1, és per guardar el final de text.
+	strcpy ( out, desti );
+	strcat ( out, text );
+return out;
 }
 
 /**

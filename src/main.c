@@ -68,7 +68,7 @@ return n;
   * Amb entrada, la clau, per a diferenciar-se entre els seus elements.
   * Amb el seu contingut, que aquí són el dia i retard.
   */
-List * inputElementInList( List * list, char *key, DataNode node)
+List * inputElementInList( List * list, char *key, DataNode *node)
 {
 	ListData * ld;
 
@@ -85,6 +85,9 @@ List * inputElementInList( List * list, char *key, DataNode node)
 	if ( ld )
 	{
 		free (key);
+		free (node->origen);
+		free (node->desti);
+		free (node);
 	} else
 	{ // Toca generar un ListData.
 		ld = (ListData *) malloc ( sizeof (ListData) );
@@ -95,14 +98,15 @@ List * inputElementInList( List * list, char *key, DataNode node)
 		// Ens assegurem inicialitzar els valors a zero (calloc).
 		ld->count = (int *) calloc ( 7, sizeof (int) ); // Contador de vegades.
 		ld->total = (int *) calloc ( 7, sizeof (int) ); // Total del retard.
+		ld->node = (void *) node;
 
 		// Afegim la data dins de la llista.
 		insertList (list, ld);
 	}
 
 	// Actualitzem la informació.
-	ld->count[dia -1]++;
-	ld->total[dia -1] += retard;
+	ld->count[node->dia -1]++;
+	ld->total[node->dia -1] += node->retard;
 return list;
 }
 
@@ -160,7 +164,7 @@ List ** linesIntoHashTable (char** lines, int count)
 	int hash;		// La clau hash.
 	char *splits[CSV_COLS];	// El separador CSV per columnes.
 	char *listKey;		// La clau que farem anar per la llista.
-	DataNode node;		// Node on enmagatzem la informació necessaria.
+	DataNode node, *nodePointer;// Node on enmagatzem la informació necessaria.
 	// Ens assegurem que tot està a zero, per evitar confucions d'interpretar llistes que no existeixen.
 	hashTable = calloc (HASH_SIZE, sizeof(List*));
 //printf ("Has: %p\t", hashTable );
@@ -190,7 +194,9 @@ List ** linesIntoHashTable (char** lines, int count)
 		listKey = encadenar2strings ( node.origen, node.desti );
 
 		// Afegim un element a la llista.
- 		hashTable[hash] = inputElementInList( hashTable[hash], listKey, node);
+		nodePointer = malloc ( sizeof (DataNode) );
+		*nodePointer = node;
+ 		hashTable[hash] = inputElementInList( hashTable[hash], listKey, nodePointer);
 	}
 
 	free ( lines ); // Alliberem la llista d'estrings.
@@ -237,8 +243,7 @@ void addListIntoTree ( RBTree * tree, List **listHash )
 				treeData->key = copyMalloc ( origen );
 
 				// Contingut.
-				listT = (List *) malloc ( sizeof(List) );
-				initList (listT);
+				listT = createList ();
 				treeData->data = listT;
 
 				// Afegim el node al abre.
@@ -291,7 +296,7 @@ int main(int argc, char **argv)
 	}
 
 	/* Allocate memory for tree and Initialize the tree */
-	tree = initTree();
+	tree = createTree ();
 
 	// M'entres hi hagi línies per a llegir.
 	while(1)

@@ -41,6 +41,7 @@ typedef struct ListData_ {
   // to the key. You may include any field you may need useful.
   int *count;
   int *total;
+  void*node;
 } ListData;
 
 
