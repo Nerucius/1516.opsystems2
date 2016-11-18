@@ -1,17 +1,18 @@
 #ifndef MENU_H
 #define MENU_H
 
-typedef struct {
+typedef struct MenuItem_ {
 	char *text;
 	void (*function)();
 } MenuItem;
 
-typedef struct {
+typedef struct Menu_ {
+	char *title;
 	int numItems;
 	MenuItem *items;
 } Menu;
 
-Menu *menu_new();
+Menu *menu_new(char *title);
 
 void menu_addItem(Menu *menu, char *item, void (*function)());
 

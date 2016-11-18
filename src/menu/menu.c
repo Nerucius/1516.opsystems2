@@ -2,11 +2,12 @@
 #include <stdlib.h>
 #include "menu.h"
 
-Menu *menu_new() {
+/** Creates a new menu with a given title */
+Menu *menu_new(char *title) {
 	Menu *m = malloc(sizeof(Menu));
+	m->title = title;
 	m->numItems = 0;
-	// Initialize an array of one empty item by default
-	m->items = malloc(sizeof(MenuItem *));
+	m->items = malloc(sizeof(MenuItem));    // Initialize an array of one empty item by default
 
 	return m;
 }
@@ -42,18 +43,18 @@ void menu_show(Menu *menu) {
 	int i;
 
 	printf("\n--------------------------------");
-	printf("\nSelecciona una Opcio:");
+	printf("\n%s", menu->title);
 
+	// Imprimir llistat d'opcions
 	for (i = 0; i < menu->numItems; i++) {
-
 		MenuItem mi = menu->items[i];
-		printf("\n%3d : %s", i + 1, mi.text);
+		printf("\n  %3d : %s", i + 1, mi.text);
 	}
-
 
 	printf("\n--------------------------------");
 	printf("\n");
 
+	// Preguntar opcio al usuari
 	int opt = -1;
 	while (!menu_chooseOption(menu, opt)) {
 		printf("Opcio: ");
@@ -61,11 +62,9 @@ void menu_show(Menu *menu) {
 		gets(in);
 		opt = atoi(in);
 	}
-
-
 }
 
-
+/** Free memory used by Menu */
 void menu_delete(Menu *menu) {
 	free(menu->items);
 	free(menu);
