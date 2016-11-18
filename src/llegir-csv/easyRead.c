@@ -1,7 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
-
 
 #include "../util.h"
 
@@ -12,7 +10,7 @@
   * Variables que ens permeten que funcions externes puguin treballar
   * sense haber inicialitzat res.
   */
-FILE *fp;	// Serveix per a llegir el fitxer.
+FILE *csvFile;	// Serveix per a llegir el fitxer.
 
 /**
   * Llegeix les línies indicades a size i ho retorna.
@@ -24,7 +22,7 @@ char ** readLines ( int requestCount, int *realCount )
 	char ** all;
 	char line[MAXCHAR];
 
-	if ( !fp ) // Comprobar que no hemos cerrado el arxivo.
+	if ( !csvFile ) // Comprobar que no hem tancat el fitxer.
 	{
 		*realCount = 0;
 		return NULL;
@@ -33,13 +31,13 @@ char ** readLines ( int requestCount, int *realCount )
 
 	for ( i = 0; i < requestCount; i++ )
 	{
-		if (fgets(line, MAXCHAR, fp) != NULL)
+		if (fgets(line, MAXCHAR, csvFile) != NULL)
 			all[i] = copyMalloc ( line );
 		else
 		{ // Realloc molt útil, ja que suposant que realCount = 0, alliverarà automaticament el malloc.
 			all = realloc ( all, i * sizeof (char *) );
-			fclose (fp); // Tanquem el fitxer.
-			fp = NULL; // Assignar NULL
+			fclose (csvFile); // Tanquem el fitxer.
+			csvFile = NULL; // Assignar NULL
 			break;
 		}
 	}
@@ -56,8 +54,8 @@ char ** readLines ( int requestCount, int *realCount )
   */
 void readInitFile ( char* name )
 {
-	fp = fopen ( name, "r" );
-	if (!fp)
+	csvFile = fopen ( name, "r" );
+	if (!csvFile)
 	{
 		printf ("El fitxer: %s\nNo existeix, o no tenim permisos.\n", name);
 		exit (1);

@@ -39,6 +39,7 @@ linked-list.o: ../linked-list/linked-list.c ../linked-list/linked-list.h Makefil
 red-black-tree.o: ../arbre-binari/red-black-tree.c ../arbre-binari/red-black-tree.h Makefile
 	gcc $(CFLAGS) -c ../arbre-binari/red-black-tree.c
 
+
 # Elimina tot el generat
 clean:
 	rm $(FILES_O_IN) $(TARGET) -f

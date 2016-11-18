@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "hash.h"
 
 // Seed per a fer el nostre hash.
