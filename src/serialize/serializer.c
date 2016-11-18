@@ -2,23 +2,26 @@
 #include "../arbre-binari/red-black-tree.h"
 
 
-void walk_inOrder(Node *node) {
+void walk_inOrder(Node *node, int level) {
 	if (node == NULL)
 		return;
 
-	walk_inOrder(node->left);
+	if (node->left != NULL) walk_inOrder(node->left, level + 1);
 
-	printf("%s ", (char *) node->data->data);
+	// Print node
+	printf("\n");
+	for (int i = 0; i < level; i++)
+		printf("  ");
+	printf("Node: %s", (char *) node->data->data);
 
-	walk_inOrder(node->right);
+	if (node->right != NULL) walk_inOrder(node->right, level + 1);
 
 }
 
 
 void ser_writeTree(RBTree *tree, FILE *out) {
 
-	Node *walkNode = tree->root;
-	walk_inOrder(walkNode);
+	walk_inOrder(tree->root, 0);
 
 //    char* text = "SampleText";
 //    fwrite(text, sizeof(char), 11, out);

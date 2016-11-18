@@ -226,51 +226,53 @@ static void insertFixup(RBTree *tree, Node *x) {
  *
  */
 void insertNode(RBTree *tree, RBData *data) {
-  Node *current, *parent, *x;
+	Node *current, *parent, *x;
 
-  /* Find where node belongs */
-  current = tree->root;
-  parent = 0;
-  while (current != NIL) {
-    if (compEQ(data->key, current->data->key)) {
-      printf("insertNode: trying to insert but primary key is already in tree.\n");
-      exit(1);
-    }
-    parent = current;
-    current = compLT(data->key, current->data->key) ?
-      current->left : current->right;
-  }
+	printf("\n> Inserting %s->%s", data->key, (char *) data->data);
 
-  /* setup new node */
-  if ((x = malloc (sizeof(*x))) == 0) {
-    printf ("insufficient memory (insertNode)\n");
-    exit(1);
-  }
+	/* Find where node belongs */
+	current = tree->root;
+	parent = 0;
+	while (current != NIL) {
+		if (compEQ(data->key, current->data->key)) {
+			printf("insertNode: trying to insert but primary key is already in tree.\n");
+			exit(1);
+		}
+		parent = current;
+		current = compLT(data->key, current->data->key) ?
+				  current->left : current->right;
+	}
 
-  /* Note that the data is not copied. Just the pointer
-     is assigned. This means that the pointer to the 
-     data should not be overwritten after calling this
-     function. */
+	/* setup new node */
+	if ((x = malloc(sizeof(*x))) == 0) {
+		printf("insufficient memory (insertNode)\n");
+		exit(1);
+	}
 
-  x->data = data;
+	/* Note that the data is not copied. Just the pointer
+	   is assigned. This means that the pointer to the
+	   data should not be overwritten after calling this
+	   function. */
 
-  /* Copy remaining data */
-  x->parent = parent;
-  x->left = NIL;
-  x->right = NIL;
-  x->color = RED;
+	x->data = data;
 
-  /* Insert node in tree */
-  if(parent) {
-    if(compLT(data->key, parent->data->key))
-      parent->left = x;
-    else
-      parent->right = x;
-  } else {
-    tree->root = x;
-  }
+	/* Copy remaining data */
+	x->parent = parent;
+	x->left = NULL;
+	x->right = NULL;
+	x->color = RED;
 
-  insertFixup(tree, x);
+	/* Insert node in tree */
+	if (parent) {
+		if (compLT(data->key, parent->data->key))
+			parent->left = x;
+		else
+			parent->right = x;
+	} else {
+		tree->root = x;
+	}
+
+	insertFixup(tree, x);
 }
 
 /**

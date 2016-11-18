@@ -15,13 +15,13 @@ void opt_createTree() {
 }
 
 void opt_saveTreeToFile() {
-	FILE *fp = fopen("write.txt", "w");
+	FILE *fp = fopen("write.bin", "w");
 	ser_writeTree(NULL, fp);
 	fclose(fp);
 }
 
 void opt_readTreeFromFile() {
-	FILE *fp = fopen("write.txt", "r");
+	FILE *fp = fopen("write.bin", "r");
 	ser_readTree(fp);
 	fclose(fp);
 }
@@ -36,6 +36,23 @@ void opt_exitProgram() {
 
 int main(int argc, char **args) {
 
+	// Create nodes
+	RBData *n1 = malloc(sizeof(RBData));
+	n1->key = "KEY001";
+	n1->data = "NodeA";
+
+	RBData *n2 = malloc(sizeof(RBData));
+	n2->key = "KEY002";
+	n2->data = "NodeB";
+
+	// Create tree
+	testTree = createTree();
+	insertNode(testTree, n1);
+	insertNode(testTree, n2);
+
+	FILE* fp = fopen("write.txt", "w");
+	ser_writeTree(testTree, fp);
+	fclose(fp);
 
 	// Crear el menu i els seus items.
 	Menu *menu = menu_new("Menu de l'Aplicacio");
