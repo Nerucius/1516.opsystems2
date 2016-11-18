@@ -59,7 +59,7 @@ void menu_show(Menu *menu) {
 	while (!menu_chooseOption(menu, opt)) {
 		printf("Opcio: ");
 		char in[8];
-		gets(in);
+		fgets(in, 8, stdin);
 		opt = atoi(in);
 	}
 }

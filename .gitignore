@@ -1,7 +1,7 @@
 # GITIGNORE FILE
 # Idea files
 .idea/
-cmakelists.txt
+CMakeLists.txt
 *.stackdump
 *.log
 *.dump

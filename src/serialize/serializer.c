@@ -29,10 +29,9 @@ void ser_writeTree(RBTree *tree, FILE *out) {
 
 RBTree *ser_readTree(FILE *in) {
 
+	return NULL;
 
 //    char text[11];
 //    fread(text, sizeof(char), 11, in);
 //    printf("%s\n", text);
-
-	return NULL;
 }

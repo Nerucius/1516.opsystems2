@@ -50,9 +50,9 @@ int main(int argc, char **args) {
 	insertNode(testTree, n1);
 	insertNode(testTree, n2);
 
-	FILE* fp = fopen("write.txt", "w");
-	ser_writeTree(testTree, fp);
-	fclose(fp);
+	//FILE* fp = fopen("write.txt", "w");
+	//ser_writeTree(testTree, fp);
+	//fclose(fp);
 
 	// Crear el menu i els seus items.
 	Menu *menu = menu_new("Menu de l'Aplicacio");
