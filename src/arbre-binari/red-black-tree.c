@@ -228,7 +228,7 @@ static void insertFixup(RBTree *tree, Node *x) {
 void insertNode(RBTree *tree, RBData *data) {
 	Node *current, *parent, *x;
 
-	//printf("\n> Inserting %s->%s", data->key, (char *) data->data);
+	printf("\n> Inserting %s->%s", data->key, (char *) data->data);
 
 	/* Find where node belongs */
 	current = tree->root;
@@ -258,8 +258,8 @@ void insertNode(RBTree *tree, RBData *data) {
 
 	/* Copy remaining data */
 	x->parent = parent;
-	x->left = NULL;
-	x->right = NULL;
+	x->left = NIL;
+	x->right = NIL;
 	x->color = RED;
 
 	/* Insert node in tree */
