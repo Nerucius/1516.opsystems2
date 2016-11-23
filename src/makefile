@@ -1,13 +1,14 @@
 CC = gcc
 CFLAGS = -Wall -Werror -g
+CFLAGS = -Wall -g
 LIBS = -lm
 
 # Sources here
-SRCS = main.c util.c serialize/serializer.c arbre-binari/red-black-tree.c hash/hash.c linked-list/linked-list.c llegir-csv/easyRead.c menu/menu.c
+SRCS = main.c util.c serialize/serializer.c rb-tree/red-black-tree.c hash/hash.c linked-list/linked-list.c read/easy-read.c menu/menu.c
 OBJS = $(SRCS:.c=.o)
 
 # !!! Insert executable name here (.exe for win64) !!!
-MAIN = bin/so2exec.exe
+MAIN = main.exe
 
 all: $(MAIN)
 	@echo Compilation successful

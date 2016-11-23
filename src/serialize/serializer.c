@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../arbre-binari/red-black-tree.h"
+#include "../rb-tree/red-black-tree.h"
 #include "serializer.h"
 
 const char *NODE_END_FLAG = "_NODEEND";

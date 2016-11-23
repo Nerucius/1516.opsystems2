@@ -21,36 +21,31 @@
 #include "linked-list.h"
 
 /**
- *
  * Free data element. The user should adapt this function to their needs.  This
  * function is called internally by deleteList.
- *
  */
-
 static void freeListData(ListData *data)
 {
 	free (data->key);
-	free (data->count);
-	free (data->total);
+	if(data->key_sec) free (data->key_sec);
 	free (data);
 }
 
 /**
- *
  * Dumps data contents to stdout. To be used for debugging.
- *
  */
-
 static void dumpListData(ListData *data)
 {
-  printf("Key: %s\n", data->key);
+	printf("\tKey: %s->%s\n", data->key_sec, data->key);
+	for(int i = 0; i < 7; i++){
+		printf("\t\tDay: %d: %.2f\n", i+1, (float)data->total[i]/data->count[i]);
+	}
+	printf("");
 }
 
 /**
- *
  * Compares if key1 is equal to key2. Should return 1 (true) if condition
  * is satisfied, 0 (false) otherwise.
- *
  */
 
 static int compEQ(TYPE_LIST_KEY key1, TYPE_LIST_KEY key2)
@@ -80,17 +75,17 @@ void initList(List *l)
  * Create an empty, initialized list.
  * @return List pointer to new list
  */
-List* createList()
+List* list_new()
 {
   List *l;
   // Allocar memoria, error si no es pot
   l = (List *) malloc ( sizeof (List) );
   if ( !l )
   {
-	  printf ("ERROR memory, 'createList'\n");
+	  printf ("ERROR memory, 'list_new'\n");
 	  exit (1);
   }
-  initList(l);  
+  initList(l);
   return l;
 }
 
@@ -106,7 +101,7 @@ List* createList()
  *
  */
 
-void insertList(List *l, ListData *data)
+void list_insertData(List *l, ListData *data)
 {
   ListItem *tmp, *x;
 
@@ -134,7 +129,7 @@ void insertList(List *l, ListData *data)
  *
  */
 
-ListData *findList(List *l, TYPE_LIST_KEY key)
+ListData *list_findKey(List *l, TYPE_LIST_KEY key)
 {
   ListItem *current;
 
@@ -151,6 +146,23 @@ ListData *findList(List *l, TYPE_LIST_KEY key)
   return (NULL);
 }
 
+ListData *list_find2Keys(List *l, TYPE_LIST_KEY key, TYPE_LIST_KEY key_sec)
+{
+	ListItem *current;
+
+	current = l->first;
+
+	while (current != NULL) {
+		// Check for BOTH matches
+		if (compEQ(current->data->key, key) && compEQ(current->data->key_sec, key_sec))
+			return (current->data);
+
+		current = current->next;
+	}
+
+	return (NULL);
+}
+
 /**
  * 
  * Deletes the first item of the list. The data to which
@@ -158,7 +170,7 @@ ListData *findList(List *l, TYPE_LIST_KEY key)
  *
  */
 
-void deleteFirstList(List *l)
+void list_deleteFirst(List *l)
 {
   ListItem *tmp;
 
@@ -180,7 +192,7 @@ void deleteFirstList(List *l)
  *
  */
 
-void deleteList(void *list)
+void list_delete(void *list)
 {
   List *l = (List *) list;
   ListItem *current, *next;
@@ -204,8 +216,7 @@ void deleteList(void *list)
  * called dumpListData which is user defined.
  *
  */
-
-void dumpList(List *l)
+void list_dump(List *l)
 {
   ListItem *current;
 

@@ -33,15 +33,16 @@
  */
 
 typedef struct ListData_ {
-  // The variable used to index the list has to be called "key".
-  TYPE_LIST_KEY key;
+	// The variable used to index the list has to be called "key".
+	TYPE_LIST_KEY key;		// Primary key (DESTI)
+	TYPE_LIST_KEY key_sec; // Secondary key (ORIGEN)
 
-  // This is the additional information that will be stored
-  // within the structure. This additional information is associated
-  // to the key. You may include any field you may need useful.
-  int *count;
-  int *total;
-  void*node;
+	// This is the additional information that will be stored
+	// within the structure. This additional information is associated
+	// to the key. You may include any field you may need useful.
+	int count[7];
+	int total[7];
+	//void* node; // Pointer to what we're storing
 } ListData;
 
 
@@ -74,14 +75,15 @@ typedef struct List_ {
  *
  */
 
-List* createList();
-void insertList(List *l, ListData *data);
-ListData *findList(List *l, TYPE_LIST_KEY key);
-void deleteFirstList(List *l);
-void deleteList(void *l);
-void dumpList(List *l);
+List* list_new();
+void list_insertData(List *l, ListData *data);
+ListData *list_findKey(List *l, TYPE_LIST_KEY key);
+ListData *list_find2Keys(List *l, TYPE_LIST_KEY key, TYPE_LIST_KEY key_sec);
+void list_deleteFirst(List *l);
+void list_delete(void *l);
+void list_dump(List *l);
 
 
 // Implementat per nosaltres.
-//void inputList ( List * list, DataNode dn ); // Afegeix un node a la llista.
+//void inputList ( List * list, DataPoint dn ); // Afegeix un node a la llista.
 #endif /* LINKED_LIST_H */
