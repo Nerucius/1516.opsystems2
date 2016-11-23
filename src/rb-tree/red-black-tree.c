@@ -332,13 +332,13 @@ void _tree_dump(Node* node, int level) {
 	printf("\n");
 	for (int i = 0; i < level; i++)
 		printf("- ");
-	printf(": %s", node->data->key);
-//	List *list = (List *) node->data->data;
-//	ListItem *li = list->first;
-//	while (li) {
-//		printf("%s, ", li->data->key);
-//		li = li->next;
-//	}
+	printf(": %s\t\t", node->data->key);
+	List *list = (List *) node->data->data;
+	ListItem *li = list->first;
+	while (li) {
+		printf("%s, ", li->data->key);
+		li = li->next;
+	}
 
 	if (node->right->data != NULL) _tree_dump(node->right, level + 1);
 

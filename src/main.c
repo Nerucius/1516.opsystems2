@@ -119,6 +119,7 @@ void opt_readTreeFromFile() {
 
 	if(tree){
 		tree_delete(tree, list_delete);
+		tree = NULL;
 	}
 
 	tree = ser_readTree(fp);
