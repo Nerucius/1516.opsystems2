@@ -1,6 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Werror -g
-CFLAGS = -Wall -g
+CFLAGS = -Wall -Werror -g -std=c99
 LIBS = -lm
 
 # Sources here

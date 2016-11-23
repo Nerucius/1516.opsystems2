@@ -15,8 +15,10 @@
 
 const char *FILE_START_FLAG = "_RBTREE_";
 const char *FILE_END_FLAG = "_FILEND_";
+
 const char *NODE_START_FLAG = "_NODSRT_";
 const char *NODE_END_FLAG = "_NODEND_";
+
 const char *LIST_START_FLAG = "_LISTAR_";
 const char *LIST_CONTINUE_FLAG = "_LISCON_";
 const char *LIST_END_FLAG = "_LISEND_";
@@ -32,6 +34,8 @@ void ser_writeInOrder(Node *node, int level, FILE *out) {
 	// Write node start flag and key
 	fwrite(NODE_START_FLAG, 1, 8, out);
 	fwrite(node->data->key, 1, 8, out);
+	
+	// printf("\nWNode: %s", node->data->key);
 
 	//char* buffer = malloc(sizeof(char) * );
 	List *list = node->data->data;
@@ -84,7 +88,7 @@ void ser_writeTree(RBTree *tree, FILE *out) {
  * @param in input stream
  */
 void readListItems(List *list, FILE *in) {
-	char *buffer = malloc(9);
+	char buffer[9];
 	buffer[8] = '\0';
 
 	ListData *ldata;
@@ -113,6 +117,7 @@ void readListItems(List *list, FILE *in) {
 			hasNext = 0;
 		}
 	}
+	
 }
 
 /**
@@ -123,7 +128,7 @@ void readListItems(List *list, FILE *in) {
  */
 RBTree *ser_readTree(FILE *in) {
 	size_t readBytes;
-	char *buffer = malloc(9);
+	char buffer[9];
 	buffer[8] = '\0';
 
 	RBTree *tree = tree_new();
@@ -139,9 +144,9 @@ RBTree *ser_readTree(FILE *in) {
 		readBytes = fread(buffer, 1, 8, in);
 
 		if (strcmp(buffer, NODE_START_FLAG) == 0) {
-			// Detected Node start
+			// Detected Node Key
 			fread(buffer, 1, 8, in);
-			// printf("\n\n%s: ", buffer);
+			// printf("\nNODE: %s", buffer);
 
 			// Create new tree node
 			rbData = malloc(sizeof(RBData));
@@ -168,6 +173,7 @@ RBTree *ser_readTree(FILE *in) {
 		}
 
 	}
+	
 
 	printf("\n Tree succesfully read from file.");
 

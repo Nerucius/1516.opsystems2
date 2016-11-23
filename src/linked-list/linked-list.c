@@ -40,7 +40,6 @@ static void dumpListData(ListData *data)
 	for(int i = 0; i < 7; i++){
 		printf("\t\tDay: %d: %.2f\n", i+1, (float)data->total[i]/data->count[i]);
 	}
-	printf("");
 }
 
 /**
