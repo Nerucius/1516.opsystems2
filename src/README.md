@@ -11,4 +11,4 @@ Llegir de N en N linies
 > main.exe 100
 
 Llegir un altre fitxer de N en N linies
-> main.exe 50 other.csv
+> main.exe other.csv 50 
