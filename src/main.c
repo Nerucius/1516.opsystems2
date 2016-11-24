@@ -1,12 +1,14 @@
+#define _BSD_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <math.h>
 
 #include "util.h"							// Serveix per a fer funcionalitats generals. Dedicat a treballar amb strings.
 #include "read/easy-read.h"
 #include "menu/menu.h"
 #include "serialize/serializer.h"
-#include <ctype.h>
 
 int RUNNING = 1;        // Flag per continuar el menu
 // Globals
@@ -99,7 +101,7 @@ void opt_saveTreeToFile() {
 	}
 
 	printf("Nom del fitxer on guardar: ");
-	gets(fileName);
+	fgets(fileName, 128, stdin);
 
 	printf("Guardant l'arbre a %s...\n", fileName);
 
@@ -121,7 +123,8 @@ void opt_readTreeFromFile() {
 	}
 
 	printf("Nom del fitxer des d'on cargar: ");
-	gets(fileName);
+	fgets(fileName, 128, stdin);
+	fileName[strlen(fileName)-1] = 0;
 
 	fp = fopen(fileName, "r");
 	if (!fp) {
@@ -139,16 +142,21 @@ void opt_readTreeFromFile() {
 void opt_showGraph() {
 	char origAir[16];
 	char destAir[16];
+	char* days[] = {"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"};
 
 	if (!tree) {
 		printf("Crea l'arbre primer.\n");
 		return;
 	}
 
-	printf("Origin: ");
-	gets(origAir);
-	printf("Destination: ");
-	gets(destAir);
+	// Llegir origen i desti de Consola
+	printf("Aeroport Origen: ");
+	fgets(origAir, 16, stdin);
+	origAir[strlen(origAir)-1] = 0;
+
+	printf("Aeroport Desti: ");
+	fgets(destAir, 16, stdin);
+	destAir[strlen(destAir)-1] = 0;
 
 	RBData* treeData = tree_findNode(tree, origAir);
 	if(!treeData){
@@ -162,12 +170,31 @@ void opt_showGraph() {
 		return;
 	}
 
-	printf("Retard Mitg: %s -> %s\n", origAir, destAir);
+	printf("Retard Mitg:\n\t%s -> %s\n", origAir, destAir);
 	for(int i = 0; i < 7; i++){
-		printf("\t\tDay %d: %.2f\n", i+1, (float)listData->total[i]/listData->count[i]);
+		printf("\t%s: %.2f\n", days[i], (float)listData->total[i]/listData->count[i]);
 	}
 
-	// TODO Pipe data to GNUPlot
+	// Crear el fitxer temporal i la canonada a GNUPlot
+	FILE *temp = fopen("data.tmp", "w");
+	FILE *gnuplotPipe = popen("gnuplot -persistent", "w");
+
+	// Escriure les dades, processant nans com a data que no tenim
+	for (int i = 0; i < 7; i++) {
+		float mean = (float) listData->total[i] / listData->count[i];
+		mean = isnan(mean) ? 0 : mean;
+		fprintf(temp, "%s %f \n", days[i], mean );
+	}
+	fclose(temp);
+
+	// Executant les comandes de GNUPlot
+	fprintf(gnuplotPipe, "set title \"Retard Mitg entre %s i %s\" \n", origAir, destAir);
+	fprintf(gnuplotPipe, "%s \n", "set style data histogram");
+	fprintf(gnuplotPipe, "%s \n", "set style fill solid");
+	fprintf(gnuplotPipe, "%s \n", "plot \"data.tmp\" using 2:xticlabels(1)");
+
+	pclose(gnuplotPipe);
+
 }
 
 void opt_dumpTree() {
@@ -176,16 +203,6 @@ void opt_dumpTree() {
 	}
 }
 
-void opt_DEBUG() {
-	RBData *tdata = tree_findNode(tree, "IND");
-
-	if (tdata) {
-		printf("\n%s", tdata->key);
-		List *list = tdata->list;
-		printf("\n num: %d", list->numItems);
-	} else
-		printf("\n No key found");
-}
 
 void opt_exitProgram() {
 	RUNNING = 0;
@@ -201,7 +218,6 @@ int main(int argc, char **argv) {
 	menu_addItem(menu, "Llegir arbre desde fitxer.", opt_readTreeFromFile);
 	menu_addItem(menu, "Mostrar Grafica de retards.", opt_showGraph);
 	menu_addItem(menu, "Mostrar estructura del Arbre.", opt_dumpTree);
-//	menu_addItem(menu, "RUN DEBUG CODE.", opt_DEBUG);
 	menu_addItem(menu, "Sortir del programa.", opt_exitProgram);
 
 	while (RUNNING)
