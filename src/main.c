@@ -5,6 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+#include <pthread.h>
 
 #include "util.h"							// Serveix per a fer funcionalitats generals. Dedicat a treballar amb strings.
 #include "read/easy-read.h"
@@ -16,6 +17,9 @@ int RUNNING = 1;        // Flag per continuar el menu
 // Globals
 RBTree *tree = NULL;    // Estructura del abre binari.
 int readBlockSize;      // Nombre de línies en que llegirà el fitxer. (primer apartat de la pràctica 2).
+
+pthread_mutex_t readLock;
+pthread_mutex_t treeLock;
 
 
 /**
@@ -51,16 +55,49 @@ int parseArgument(int argc, char **argv) {
 	return 1000;
 }
 
+void* thread_createTree(void* none){
+	int lineCount;            // Tamany real llegit i per a saber si continuar dins del bucle.
+	char **linesRead;        // Llista on hi ha les N línies llegides.
+	List **listHashTable;        // Array de llistes amb el format del hash.
+
+	// Mentres hi hagi línies per llegir.
+	while (1) {
+		
+		// Lectura en blocks de N lines o menys
+		pthread_mutex_lock(&readLock);
+		linesRead = read_readLines(readBlockSize, &lineCount);
+		pthread_mutex_unlock(&readLock);
+
+		// Si no s'han llegit mes linies, sortir del bucle
+		if (!lineCount)
+			break;
+
+		// Inserció de dades a la taula hash.
+		listHashTable = flow_linesIntoHashTable(linesRead, lineCount);
+
+		// Insercio a l'arbre binari
+		pthread_mutex_lock(&treeLock);
+		flow_addHashtableToTree(tree, listHashTable);
+		pthread_mutex_unlock(&treeLock);
+
+		// Free memory
+		for (int i = 0; i < HASH_SIZE; i++)
+			if (listHashTable[i])
+				list_delete(listHashTable[i]);
+		free(listHashTable);
+	}
+	
+	return NULL;
+}
+
 /******************
  * MENU FUNCTIONS *
  ******************/
 
 /** Opcio del menu per llegit el arbre desde un fitxer binari. */
 void opt_createTree() {
-	int lineCount;            // Tamany real llegit i per a saber si continuar dins del bucle.
-	char **linesRead;        // Llista on hi ha les N línies llegides.
-	List **listHashTable;        // Array de llistes amb el format del hash.
-
+	// TODO Create 2 threads and execute thread_createTree()
+	
 	if (readBlockSize <= 0) {
 		printf("Ha de ser un valor positiu. Heu entrat: %d\n", readBlockSize);
 		exit(EXIT_FAILURE);
@@ -72,29 +109,15 @@ void opt_createTree() {
 		tree_delete(tree, list_delete);
 	}
 	tree = tree_new();
-
-	// Mentres hi hagi línies per llegir.
-	while (1) {
-		// Lectura en blocks de N lines o menys
-		linesRead = read_readLines(readBlockSize, &lineCount);
-
-		// Si no s'han llegit mes linies, sortir del bucle
-		if (!lineCount)
-			break;
-
-		// Inserció de dades a la taula hash.
-		listHashTable = flow_linesIntoHashTable(linesRead, lineCount);
-
-		// Insercio a l'arbre binari
-		flow_addHashtableToTree(tree, listHashTable);
-
-		// Free memory
-		for (int i = 0; i < HASH_SIZE; i++)
-			if (listHashTable[i])
-				list_delete(listHashTable[i]);
-		free(listHashTable);
-	}
-
+	
+	pthread_t threads[2];
+	for(int i = 0; i < 2; i++)
+		pthread_create(&threads[i], NULL, thread_createTree, NULL);	
+	
+	for(int i = 0; i < 2; i++)
+		pthread_join(threads[i], NULL);
+	
+	
 	if(tree){
 		printf("Arbre creat correctament.\n");
 	}

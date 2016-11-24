@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Werror -g -std=c11
-LIBS = -lm
+LIBS = -l m -l pthread
 
 # Sources here
 SRCS = main.c util.c serialize/serializer.c rb-tree/red-black-tree.c hash/hash.c linked-list/linked-list.c read/easy-read.c menu/menu.c
@@ -22,7 +22,8 @@ $(MAIN): $(OBJS)
 
 # Cleanup, including executable
 clean:
-	$(RM) *.o *~
+	find . -name "*.o" -type f -delete
+#$(RM) *.o *~
 
 clean-all:
 	$(RM) *.o *~ $(MAIN)

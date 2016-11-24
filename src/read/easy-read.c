@@ -31,7 +31,7 @@ void read_closeFile()
 	if (csvFile) {
 		fclose(csvFile);
 		csvFile = NULL;
-	}
+	}	
 }
 
 /**
