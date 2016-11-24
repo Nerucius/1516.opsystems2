@@ -13,6 +13,9 @@
 #include "serialize/serializer.h"
 #include "hash/hash.h"
 
+// Configura numero de threads
+#define NUM_THREADS 4
+
 int RUNNING = 1;        // Flag per continuar el menu
 // Globals
 RBTree *tree = NULL;    // Estructura del abre binari.
@@ -110,11 +113,11 @@ void opt_createTree() {
 	}
 	tree = tree_new();
 	
-	pthread_t threads[2];
-	for(int i = 0; i < 2; i++)
+	pthread_t threads[NUM_THREADS];
+	for(int i = 0; i < NUM_THREADS; i++)
 		pthread_create(&threads[i], NULL, thread_createTree, NULL);	
 	
-	for(int i = 0; i < 2; i++)
+	for(int i = 0; i < NUM_THREADS; i++)
 		pthread_join(threads[i], NULL);
 	
 	
