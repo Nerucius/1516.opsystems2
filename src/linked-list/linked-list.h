@@ -42,7 +42,6 @@ typedef struct ListData_ {
 	// to the key. You may include any field you may need useful.
 	int count[7];
 	int total[7];
-	//void* node; // Pointer to what we're storing
 } ListData;
 
 

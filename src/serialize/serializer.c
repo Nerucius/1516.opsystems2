@@ -38,7 +38,7 @@ void ser_writeInOrder(Node *node, int level, FILE *out) {
 	// printf("\nWNode: %s", node->data->key);
 
 	//char* buffer = malloc(sizeof(char) * );
-	List *list = node->data->data;
+	List *list = node->data->list;
 
 	// If the node has a list, write it out
 	if (list) {
@@ -158,7 +158,7 @@ RBTree *ser_readTree(FILE *in) {
 			// Read entire list, and save as node data
 			List *list = list_new();
 			readListItems(list, in);
-			rbData->data = list;
+			rbData->list = list;
 
 
 		} else if (strcmp(buffer, NODE_END_FLAG) == 0) {
@@ -173,9 +173,6 @@ RBTree *ser_readTree(FILE *in) {
 		}
 
 	}
-	
-
-	printf("\n Tree succesfully read from file.");
 
 	return tree;
 }

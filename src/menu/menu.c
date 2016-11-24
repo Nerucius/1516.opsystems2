@@ -42,16 +42,17 @@ int menu_chooseOption(Menu *menu, int opt) {
 void menu_show(Menu *menu) {
 	int i;
 
-	printf("\n--------------------------------");
-	printf("\n%s", menu->title);
+	printf("\n=============================================");
+	printf("\n\t%s", menu->title);
+	printf("\n=============================================");
 
 	// Imprimir llistat d'opcions
 	for (i = 0; i < menu->numItems; i++) {
 		MenuItem mi = menu->items[i];
-		printf("\n  %3d : %s", i + 1, mi.text);
+		printf("\n  %3d - %s", i + 1, mi.text);
 	}
 
-	printf("\n--------------------------------");
+	printf("\n=============================================");
 	printf("\n");
 
 	// Preguntar opcio al usuari

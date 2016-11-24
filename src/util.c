@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "util.h"
 #include "hash/hash.h"
@@ -8,12 +9,12 @@
   * A partir d'una llista de strings, extreiem les columnes que ens interessen.
   * @return Punter a un nou DataPoint amb la informacio
   */
-DataPoint* dataFromColumns(char **elements) {
-	DataPoint* dp = malloc(sizeof(DataPoint));
+DataPoint *dataFromColumns(char **elements) {
+	DataPoint *dp = calloc(1, sizeof(DataPoint));
 	char **p = elements - 1; // Apunta a la posició -1 de la llista per usar els numeros de columna naturals
 
-	dp->dia = atoi(p[4]);				// Afegeix la informació del dia.
-	dp->retard = atoi(p[15]);			// Afegeix la informació del retard.
+	dp->dia = atoi(p[4]);                // Afegeix la informació del dia.
+	dp->retard = atoi(p[15]);            // Afegeix la informació del retard.
 	strcpy(dp->origen, p[17]);
 	strcpy(dp->desti, p[18]);
 //	dp.origen = copyMalloc(p[17]);		// Diu d'on surt l'avio.
@@ -46,17 +47,15 @@ List *flow_inputElementInList(List *list, DataPoint *dataP) {
 		ldata = (ListData *) malloc(sizeof(ListData));
 
 		// Definim les dos claus
-		ldata->key = malloc((strlen(dataP->desti) * sizeof(char)) + 1);
+		ldata->key = calloc(sizeof(char), 8);
 		strcpy(ldata->key, dataP->desti);
 
-		ldata->key_sec = malloc((strlen(dataP->origen) * sizeof(char)) + 1);
+		ldata->key_sec = calloc(sizeof(char), 8);
 		strcpy(ldata->key_sec, dataP->origen);
 
 		// Inicialitzem els arrays a 0
-		for (int i = 0; i < 7; i++) {
-			ldata->count[i] = 0;
-			ldata->total[i] = 0;
-		}
+		memset(ldata->count, 0, sizeof(int) * 7);
+		memset(ldata->total, 0, sizeof(int) * 7);
 
 		// Afegim la data dins de la llista.
 		list_insertData(list, ldata);
@@ -139,23 +138,40 @@ void flow_addHashtableToTree(RBTree *tree, List **listHash) {
 			tdata = tree_findNode(tree, hashListData->key_sec);
 
 			if (!tdata) {
+//				printf("Creating node %s\n", hashListData->key_sec);
+
 				// Si no existeix l'entrada a l'arbre per aquest ORIGEN, crearla
 				tdata = (RBData *) malloc(sizeof(RBData));
 
 				// La clau de l'Arbre es l'ORIGEN
-				tdata->key = malloc((strlen(hashListData->key_sec) * sizeof(char)) + 1);
+				tdata->key = calloc(8, sizeof(char));
 				strcpy(tdata->key, hashListData->key_sec);
 
 				// Nova llista amb DESTI com clau
-				tdata->data = list_new();
+				tdata->list = list_new();
 
 				// Afegim el node al abre.
 				tree_insertNode(tree, tdata);
+
+				//tree_dump(tree);
 			}
 
-			// Afegim l'informació a la entrada de l'Arbre, tal cual la teniem
+			// Afegim l'informació a la entrada de l'Arbre
+			ListData *treeListData = list_findKey(tdata->list, hashListData->key);
+			if (!treeListData) {
+				// Si no te aquesta clau, inserir el que tenim
+				list_insertData(tdata->list, hashListData);
 
-			list_insertData(tdata->data, hashListData);
+			} else {
+				// Sino, fusionar les dades i alliberar l'antiga
+				for (int j = 0; j < 7; j++) {
+					treeListData->count[j] += hashListData->count[j];
+					treeListData->total[j] += hashListData->total[j];
+				}
+				free(hashListData->key);
+				free(hashListData->key_sec);
+				free(hashListData);
+			}
 
 			// Seleccionem el seguent element.
 			hashListItem = hashListItem->next;
@@ -171,8 +187,7 @@ void flow_addHashtableToTree(RBTree *tree, List **listHash) {
   *
   * El més 1 del malloc és per guardar el final.
   */
-char * copyMalloc ( char * in )
-{
+char *copyMalloc(char *in) {
 	char *out = (char *) malloc(sizeof(char) * (strlen(in) + 1)); // +1, és per guardar el final del text.
 	strcpy(out, in);
 	return out;
@@ -185,8 +200,7 @@ char * copyMalloc ( char * in )
   * Perque pel destinatari farà un realloc ( només un free per aquest, però el esperat ).
   * I l'altre automaticament fa el free.
   */
-char * encadenar2strings ( char * desti, char * text )
-{
+char *encadenar2strings(char *desti, char *text) {
 	char *out = malloc(sizeof(char) * (strlen(desti) + strlen(text) + 1)); // +1, és per guardar el final de text.
 	strcpy(out, desti);
 	strcat(out, text);
@@ -200,17 +214,16 @@ char * encadenar2strings ( char * desti, char * text )
   * line, és la línia on trobarem tota la informació.
   * v, és on guardarem totes les separacions.
   */
-void splitLine (char *line, char *v[CSV_COLS], char sep)
-{
+void splitLine(char *line, char *v[CSV_COLS], char sep) {
 	int i = 0, j = 1;
 	char c = 1; // Per entrar dins del bucle.
 
 	v[0] = line;
-	while ( c && (j < CSV_COLS) ) // Iterate over all line characters
+	while (c && (j < CSV_COLS)) // Iterate over all line characters
 	{ // end when we reach end of "line" (\0)
-		if ( c == sep ) // If we find the separator character
+		if (c == sep) // If we find the separator character
 		{
-			line[i -1] = '\0';
+			line[i - 1] = '\0';
 			v[j++] = line + i; // place next column start after separator
 		}
 		c = line[i++];

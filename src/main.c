@@ -1,13 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include <string.h>
 
 #include "util.h"							// Serveix per a fer funcionalitats generals. Dedicat a treballar amb strings.
 #include "read/easy-read.h"
 #include "menu/menu.h"
 #include "serialize/serializer.h"
-
+#include <ctype.h>
 
 int RUNNING = 1;        // Flag per continuar el menu
 // Globals
@@ -25,7 +24,7 @@ int parseArgument(int argc, char **argv) {
 			read_initFile("file.csv");
 			break;
 		case 2: // Si posa una entrada,
-			if (isdigit (argv[1][0])) { // i es digit, llegira en base el dígit.
+			if (isdigit(argv[1][0])) { // i es digit, llegira en base el dígit.
 				argc = atoi(argv[1]);
 				if (!argc) {
 					printf("S'ha de llegir un nombre de línies.\n");
@@ -48,12 +47,15 @@ int parseArgument(int argc, char **argv) {
 	return 1000;
 }
 
+/******************
+ * MENU FUNCTIONS *
+ ******************/
 
-// MENU FUNCTIONS
+/** Opcio del menu per llegit el arbre desde un fitxer binari. */
 void opt_createTree() {
 	int lineCount;            // Tamany real llegit i per a saber si continuar dins del bucle.
 	char **linesRead;        // Llista on hi ha les N línies llegides.
-	List **listHash;        // Array de llistes amb el format del hash.
+	List **listHashTable;        // Array de llistes amb el format del hash.
 
 	if (readBlockSize <= 0) {
 		printf("Ha de ser un valor positiu. Heu entrat: %d\n", readBlockSize);
@@ -76,64 +78,113 @@ void opt_createTree() {
 		if (!lineCount)
 			break;
 
-		// Segon apartat de l'enunciat: Incerció de dades a la taula hash.
-		//printf("Putting %d lines into hash\n", lineCount);
-		listHash = flow_linesIntoHashTable(linesRead, lineCount);
-
-		//printf ( "%s\n", read[--size]);
+		// Inserció de dades a la taula hash.
+		listHashTable = flow_linesIntoHashTable(linesRead, lineCount);
 
 		// Insercio a l'arbre binari
-		flow_addHashtableToTree(tree, listHash);
+		flow_addHashtableToTree(tree, listHashTable);
 
-		// Lliberar memoria de la taula Hash
-//		for (int i = 0; i < HASH_SIZE; i++)
-//			if (listHash[i]) list_delete(listHash[i]);
-		free(listHash);
+		free(listHashTable);
 	}
-
-//	for (int i = 0; i < HASH_SIZE; i++) {
-//		if (listHash[i]) {
-//			printf("%3d: %s\n", i, listHash[i]->first->data->key_sec);
-//			list_dump(listHash[i]);
-//		}
-//	}
 }
 
+/** Opcio del menu per escriure l'arbre a un fitxer binari. */
 void opt_saveTreeToFile() {
+	char fileName[128];
+	FILE *fp;
+
 	if (!tree) {
 		printf("Crea l'arbre primer\n");
 		return;
 	}
 
-	FILE *fp = fopen("write.txt", "w");
+	printf("Nom del fitxer on guardar: ");
+	gets(fileName);
+
+	printf("Guardant l'arbre a %s...\n", fileName);
+
+	fp = fopen(fileName, "w");
 	ser_writeTree(tree, fp);
 	fclose(fp);
+
+	printf("Guardat correctament.\n");
 }
 
+/** Opcio del menu per llegit el arbre desde un fitxer binari. */
 void opt_readTreeFromFile() {
-	FILE *fp = fopen("write.txt", "r");
-	if (!fp) {
-		printf("No s'ha trobat el fitxer\n");
-		return;
-	}
+	char fileName[128];
+	FILE *fp;
 
-	if(tree){
+	if (tree) {
 		tree_delete(tree, list_delete);
 		tree = NULL;
 	}
 
+	printf("Nom del fitxer des d'on cargar: ");
+	gets(fileName);
+
+	fp = fopen(fileName, "r");
+	if (!fp) {
+		printf("No s'ha trobat el fitxer\n");
+		return;
+	}
 	tree = ser_readTree(fp);
 	fclose(fp);
+
+	if (tree)
+		printf("Arbre carregat desde memoria correctament.\n");
 }
 
+/** Opcio del menu per mostrar una grafica de retards entre dos aeroports. */
 void opt_showGraph() {
+	char origAir[16];
+	char destAir[16];
+
+	if (!tree) {
+		printf("Crea l'arbre primer.\n");
+		return;
+	}
+
+	printf("Origin: ");
+	gets(origAir);
+	printf("Destination: ");
+	gets(destAir);
+
+	RBData* treeData = tree_findNode(tree, origAir);
+	if(!treeData){
+		printf("Origen no trobat.\n");
+		return;
+	}
+
+	ListData* listData = list_findKey(treeData->list, destAir);
+	if(!listData){
+		printf("Destinacio no trobada.\n");
+		return;
+	}
+
+	printf("Retard Mitg: %s -> %s\n", origAir, destAir);
+	for(int i = 0; i < 7; i++){
+		printf("\t\tDay %d: %.2f\n", i+1, (float)listData->total[i]/listData->count[i]);
+	}
+
 	// TODO Pipe data to GNUPlot
 }
 
-void opt_dumpTree(){
-	if(tree){
+void opt_dumpTree() {
+	if (tree) {
 		tree_dump(tree);
 	}
+}
+
+void opt_DEBUG() {
+	RBData *tdata = tree_findNode(tree, "IND");
+
+	if (tdata) {
+		printf("\n%s", tdata->key);
+		List *list = tdata->list;
+		printf("\n num: %d", list->numItems);
+	} else
+		printf("\n No key found");
 }
 
 void opt_exitProgram() {
@@ -150,6 +201,7 @@ int main(int argc, char **argv) {
 	menu_addItem(menu, "Llegir arbre desde fitxer.", opt_readTreeFromFile);
 	menu_addItem(menu, "Mostrar Grafica de retards.", opt_showGraph);
 	menu_addItem(menu, "Mostrar estructura del Arbre.", opt_dumpTree);
+//	menu_addItem(menu, "RUN DEBUG CODE.", opt_DEBUG);
 	menu_addItem(menu, "Sortir del programa.", opt_exitProgram);
 
 	while (RUNNING)

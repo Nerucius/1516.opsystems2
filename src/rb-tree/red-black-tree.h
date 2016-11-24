@@ -16,12 +16,12 @@ typedef struct RBData_
 {
   // The variable used to index the tree has to be called "key".
   // The type may be any you want (float, char *, etc)
-  TYPE_RBTREE_KEY key;     
+  TYPE_RBTREE_KEY key;		// ORIGEN
 
   // This is the additional information that will be stored
   // within the structure. You may adapt it to your needs:
   // add or remove fields as you need.
-  void* data;	// Pointer to a Linked-List
+  void* list;				// Pointer to a Linked-List
 } RBData;
 
 /**

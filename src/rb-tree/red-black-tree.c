@@ -24,7 +24,6 @@
 #include <string.h>
 
 #include "red-black-tree.h"
-#include "../linked-list/linked-list.h"
 
 /**
  *
@@ -37,8 +36,29 @@
 static void freeRBData(RBData *data, void (*deleteData)(void *data))
 {
 	free (data->key);
-	deleteData(data->data);
+	deleteData(data->list);
 	free(data);
+}
+
+/** Debug function for Key Comparison */
+int keyCompare(TYPE_RBTREE_KEY a, TYPE_RBTREE_KEY b){
+	char* pta = a;
+	char* ptb = b;
+
+	while(pta){
+		if (*pta < *ptb){
+			printf("%s < %s\n", pta, ptb);
+			return 1;
+		}
+		if (*pta > *ptb) {
+			printf("%s > %s\n", pta, ptb);
+			return 0;
+		}
+		pta++;
+		ptb++;
+	}
+	puts("ERROR: Same key compared");
+	exit(EXIT_FAILURE);
 }
 
 /**
@@ -49,9 +69,14 @@ static void freeRBData(RBData *data, void (*deleteData)(void *data))
  */
 static int compLT(TYPE_RBTREE_KEY key1, TYPE_RBTREE_KEY key2)
 {
-  if ( strcmp ( key1, key2 ) == -1 )
-  	return 1;
-  return 0;
+	while(key1) {
+		if (*key1 < *key2) return 1;
+		if (*key1 > *key2) return 0;
+		key1++;
+		key2++;
+	}
+	puts("ERROR: Same key found");
+	exit(EXIT_FAILURE);
 }
 
 /**
@@ -222,17 +247,16 @@ static void insertFixup(RBTree *tree, Node *x) {
  * overwritten after calling this function.
  *
  */
-void tree_insertNode(RBTree *tree, RBData *data) {
+void tree_insertNode(RBTree *tree, RBData *data){
 	Node *current, *parent, *x;
 
-	//printf("\n> Inserting %s->%s", data->key, (char *) data->data);
 
 	/* Find where node belongs */
 	current = tree->root;
 	parent = 0;
 	while (current != NIL) {
 		if (compEQ(data->key, current->data->key)) {
-			printf("tree_insertNode: trying to insert but primary key is already in tree.\n");
+			printf("\ntree_insertNode: Duplicate key: %s\n", data->key);
 			exit(1);
 		}
 		parent = current;
@@ -278,17 +302,17 @@ void tree_insertNode(RBTree *tree, RBData *data) {
  *  Returns NULL if not found.
  *
  */
-RBData *tree_findNode(RBTree *tree, TYPE_RBTREE_KEY key) {
+RBData *tree_findNode(RBTree *tree, TYPE_RBTREE_KEY key){
+	Node *current = tree->root;
 
-  Node *current = tree->root;
-  while(current != NIL)
-    if(compEQ(key, current->data->key))
-      return (current->data);
-    else
-      current = compLT(key, current->data->key) ?
-	current->left : current->right;
+	while (current != NIL)
+		if (compEQ(key, current->data->key))
+			return (current->data);
+		else
+			current = compLT(key, current->data->key) ?
+					  current->left : current->right;
 
-  return NULL;
+	return NULL;
 }
 
 /**
@@ -325,25 +349,26 @@ void tree_delete(RBTree *tree, void (*deleteData)(void *data))
 }
 
 void _tree_dump(Node* node, int level) {
+	if(node == NIL)
+		return;
 
-	if (node->left->data != NULL) _tree_dump(node->left, level + 1);
+	if (node->left != NIL) _tree_dump(node->left, level + 1);
 
 	// Print node
 	printf("\n");
 	for (int i = 0; i < level; i++)
-		printf("- ");
-	printf(": %s\t\t", node->data->key);
-	List *list = (List *) node->data->data;
-	ListItem *li = list->first;
-	while (li) {
-		printf("%s, ", li->data->key);
-		li = li->next;
-	}
+		printf("-");
+	printf(">%s", node->data->key);
 
-	if (node->right->data != NULL) _tree_dump(node->right, level + 1);
+	// Dump list
+//	List *list = (List *) node->data->data;
+//	ListItem *li = list->first;
+//	while (li) {
+//		printf("%s, ", li->data->key);
+//		li = li->next;
+//	}
 
-
-
+	if (node->right != NIL) _tree_dump(node->right, level + 1);
 }
 
 void tree_dump(RBTree *tree){
