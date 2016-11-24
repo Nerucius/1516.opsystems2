@@ -106,7 +106,7 @@ void list_insertData(List *l, ListData *data)
 
   x = malloc(sizeof(ListItem));
 
-  if (x == 0) {
+  if (!x) {
     printf("insufficient memory (insertItem)\n");
     exit(1);
   }

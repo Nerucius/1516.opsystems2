@@ -146,7 +146,6 @@ RBTree *ser_readTree(FILE *in) {
 		if (strcmp(buffer, NODE_START_FLAG) == 0) {
 			// Detected Node Key
 			fread(buffer, 1, 8, in);
-			// printf("\nNODE: %s", buffer);
 
 			// Create new tree node
 			rbData = malloc(sizeof(RBData));
@@ -164,11 +163,9 @@ RBTree *ser_readTree(FILE *in) {
 		} else if (strcmp(buffer, NODE_END_FLAG) == 0) {
 			// Insert finished node into data
 			tree_insertNode(tree, rbData);
-//			printf("\nNODE_END_FLAG");
 
 		} else if (strcmp(buffer, FILE_END_FLAG) == 0 || readBytes == 0) {
 			// Detected file end, exit function
-//			printf("\nFILE_END_FLAG");
 			break;
 		}
 

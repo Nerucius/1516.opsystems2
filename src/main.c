@@ -1,4 +1,5 @@
 #define _BSD_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,6 +10,7 @@
 #include "read/easy-read.h"
 #include "menu/menu.h"
 #include "serialize/serializer.h"
+#include "hash/hash.h"
 
 int RUNNING = 1;        // Flag per continuar el menu
 // Globals
@@ -86,6 +88,10 @@ void opt_createTree() {
 		// Insercio a l'arbre binari
 		flow_addHashtableToTree(tree, listHashTable);
 
+		// Free memory
+		for (int i = 0; i < HASH_SIZE; i++)
+			if (listHashTable[i])
+				list_delete(listHashTable[i]);
 		free(listHashTable);
 	}
 }
@@ -124,7 +130,7 @@ void opt_readTreeFromFile() {
 
 	printf("Nom del fitxer des d'on cargar: ");
 	fgets(fileName, 128, stdin);
-	fileName[strlen(fileName)-1] = 0;
+	fileName[strlen(fileName) - 1] = 0;
 
 	fp = fopen(fileName, "r");
 	if (!fp) {
@@ -142,7 +148,7 @@ void opt_readTreeFromFile() {
 void opt_showGraph() {
 	char origAir[16];
 	char destAir[16];
-	char* days[] = {"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"};
+	char *days[] = {"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"};
 
 	if (!tree) {
 		printf("Crea l'arbre primer.\n");
@@ -152,27 +158,27 @@ void opt_showGraph() {
 	// Llegir origen i desti de Consola
 	printf("Aeroport Origen: ");
 	fgets(origAir, 16, stdin);
-	origAir[strlen(origAir)-1] = 0;
+	origAir[strlen(origAir) - 1] = 0;
 
 	printf("Aeroport Desti: ");
 	fgets(destAir, 16, stdin);
-	destAir[strlen(destAir)-1] = 0;
+	destAir[strlen(destAir) - 1] = 0;
 
-	RBData* treeData = tree_findNode(tree, origAir);
-	if(!treeData){
+	RBData *treeData = tree_findNode(tree, origAir);
+	if (!treeData) {
 		printf("Origen no trobat.\n");
 		return;
 	}
 
-	ListData* listData = list_findKey(treeData->list, destAir);
-	if(!listData){
+	ListData *listData = list_findKey(treeData->list, destAir);
+	if (!listData) {
 		printf("Destinacio no trobada.\n");
 		return;
 	}
 
 	printf("Retard Mitg:\n\t%s -> %s\n", origAir, destAir);
-	for(int i = 0; i < 7; i++){
-		printf("\t%s: %.2f\n", days[i], (float)listData->total[i]/listData->count[i]);
+	for (int i = 0; i < 7; i++) {
+		printf("\t%s: %.2f\n", days[i], (float) listData->total[i] / listData->count[i]);
 	}
 
 	// Crear el fitxer temporal i la canonada a GNUPlot
@@ -183,7 +189,7 @@ void opt_showGraph() {
 	for (int i = 0; i < 7; i++) {
 		float mean = (float) listData->total[i] / listData->count[i];
 		mean = isnan(mean) ? 0 : mean;
-		fprintf(temp, "%s %f \n", days[i], mean );
+		fprintf(temp, "%s %f \n", days[i], mean);
 	}
 	fclose(temp);
 
@@ -203,7 +209,7 @@ void opt_dumpTree() {
 	}
 }
 
-
+/** Opcio del menu per terminar l'execucio del programa. */
 void opt_exitProgram() {
 	RUNNING = 0;
 }
@@ -226,6 +232,7 @@ int main(int argc, char **argv) {
 	// Alliberar memoria de les estructures
 	menu_delete(menu);
 	if (tree != NULL) tree_delete(tree, list_delete);
+	read_closeFile();
 
 	return EXIT_SUCCESS;
 }

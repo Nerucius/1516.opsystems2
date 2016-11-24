@@ -1,4 +1,0 @@
-{
-  "name": "cproject"
-, "files": [ { "directory": "src", "filters": ["*.c", "*.h"], "recursive": 1 } ]
-} 

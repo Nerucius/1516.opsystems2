@@ -5,17 +5,13 @@ CMakeLists.txt
 *.stackdump
 *.log
 *.dump
+*.tmp
 
 # temporal output vim
 *.swp
 
 # output objects in c
 *.o
-a.out
-
-# output compile, exept Makefile
-src/bin
-!src/bin/Makefile
 
 # Post Script
 *.ps

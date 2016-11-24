@@ -116,9 +116,10 @@ List **flow_linesIntoHashTable(char **lines, int count) {
 
 void flow_addHashtableToTree(RBTree *tree, List **listHash) {
 	ListItem *hashListItem;
-	List *linkedList;    // Lista linkada dins de RBData
+	List *linkedList;            // Lista linkada dins de RBData
 	ListData *hashListData;    // Data dins de la lista
-	RBData *tdata;        // Data dins de l'arbe
+	ListData *treeListData;        // Data dins del node del arbre
+	RBData *tdata;
 
 	int i = HASH_SIZE;            // Comptador, per a recorre tota la llista hash.
 
@@ -130,16 +131,12 @@ void flow_addHashtableToTree(RBTree *tree, List **listHash) {
 		// Recorrem tots els elements de la llista.
 		hashListItem = linkedList->first;
 		while (hashListItem) {
-			// Recordem que cada entrada de la llista pot tenir un origen diferent, aixi que s'han de tractar
-			// de manera individual
 			hashListData = hashListItem->data;
 
 			// Trobar el node al arbe amb el mateix origen
 			tdata = tree_findNode(tree, hashListData->key_sec);
 
 			if (!tdata) {
-//				printf("Creating node %s\n", hashListData->key_sec);
-
 				// Si no existeix l'entrada a l'arbre per aquest ORIGEN, crearla
 				tdata = (RBData *) malloc(sizeof(RBData));
 
@@ -152,27 +149,31 @@ void flow_addHashtableToTree(RBTree *tree, List **listHash) {
 
 				// Afegim el node al abre.
 				tree_insertNode(tree, tdata);
-
-				//tree_dump(tree);
 			}
 
 			// Afegim l'informació a la entrada de l'Arbre
-			ListData *treeListData = list_findKey(tdata->list, hashListData->key);
+			treeListData = list_findKey(tdata->list, hashListData->key);
+
 			if (!treeListData) {
-				// Si no te aquesta clau, inserir el que tenim
-				list_insertData(tdata->list, hashListData);
+				// Si no te aquesta clau, en creem una de nova i copiem totes les dades
+				treeListData = malloc(sizeof(ListData));
+				treeListData->key = calloc(8, sizeof(char));
+				treeListData->key_sec = calloc(8, sizeof(char));
+
+				strcpy(treeListData->key, hashListData->key);
+				strcpy(treeListData->key_sec, hashListData->key_sec);
+				memcpy(treeListData->count, hashListData->count, sizeof(int) * 7);
+				memcpy(treeListData->total, hashListData->total, sizeof(int) * 7);
+
+				list_insertData(tdata->list, treeListData);
 
 			} else {
-				// Sino, fusionar les dades i alliberar l'antiga
+				// Sino, fusionar les dades
 				for (int j = 0; j < 7; j++) {
 					treeListData->count[j] += hashListData->count[j];
 					treeListData->total[j] += hashListData->total[j];
 				}
-				free(hashListData->key);
-				free(hashListData->key_sec);
-				free(hashListData);
 			}
-
 			// Seleccionem el seguent element.
 			hashListItem = hashListItem->next;
 		}
