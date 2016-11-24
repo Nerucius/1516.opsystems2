@@ -94,6 +94,10 @@ void opt_createTree() {
 				list_delete(listHashTable[i]);
 		free(listHashTable);
 	}
+
+	if(tree){
+		printf("Arbre creat correctament.\n");
+	}
 }
 
 /** Opcio del menu per escriure l'arbre a un fitxer binari. */
@@ -108,6 +112,7 @@ void opt_saveTreeToFile() {
 
 	printf("Nom del fitxer on guardar: ");
 	fgets(fileName, 128, stdin);
+	fileName[strlen(fileName) - 1] = 0;
 
 	printf("Guardant l'arbre a %s...\n", fileName);
 

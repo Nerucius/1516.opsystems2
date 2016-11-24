@@ -31,9 +31,6 @@ void read_closeFile()
 	if (csvFile) {
 		fclose(csvFile);
 		csvFile = NULL;
-	} else {
-		printf("Intentat tancar un fitxer quan no hi ha cap obert.");
-		exit(EXIT_FAILURE);
 	}
 }
 

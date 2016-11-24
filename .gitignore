@@ -12,6 +12,7 @@ CMakeLists.txt
 
 # output objects in c
 *.o
+*.exe
 
 # Post Script
 *.ps
