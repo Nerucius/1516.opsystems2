@@ -16,3 +16,5 @@ CMakeLists.txt
 
 # Post Script
 *.ps
+*.eps
+*.pdf

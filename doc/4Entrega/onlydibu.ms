@@ -1,32 +1,4 @@
 .defcolor lolita rgb 0.1 0.5 0.2
-Test amb colors.
-.PS
-box color "blue"
-box color "red"
-line color "green"
-circle color "lolita"
-ellipse "\m[lolita]color lola\m[]"
-.PE
-
-
-Sigui M buffer
-
-Necessitem 2 semafors
-.br
-Necessitem 1 keys
-
-sem_t product -> M
-.br
-sem_t consumer -> 0
-
-key product
-.br
-key consumer
-
-
-1 Sol productor, Multiples lectors.
-.br
-No cal protegir l'acc\('es de les claus en Productor.
 .PS
 # Definim objectes.
 # Data parallelogram
