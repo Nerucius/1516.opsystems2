@@ -1,0 +1,175 @@
+P:     0
+P:     1
+P:     2
+P:     3
+P:     4
+P:     5
+P:     6
+P:     7
+P:     8
+P:     9
+P:    10
+P:    11
+P:    12
+P:    13
+P:    14
+P:    15
+P:    16
+P:    17
+P:    18
+P:    19
+P:    20
+P:    21
+P:    22
+P:    23
+P:    24
+P:    25
+C:    0,    1,   24
+P:    26
+C:    1,    2,   26
+P:    27
+C:    2,    3,   27
+P:    28
+C:    3,    4,   28
+P:    29
+C:    4,    5,   29
+P:    30
+C:    5,    6,    0
+P:    31
+C:    6,    7,    1
+P:    32
+C:    7,    8,    2
+P:    33
+C:    8,    9,    3
+P:    34
+C:    9,   10,    4
+P:    35
+C:   10,   11,    5
+P:    36
+C:   11,   12,    6
+P:    37
+C:   12,   13,    7
+P:    38
+P:    39
+C:   13,   14,    9
+P:    40
+P:    41
+C:   14,   15,   11
+P:    42
+P:    43
+C:   15,   16,   13
+P:    44
+P:    45
+C:   16,   17,   15
+P:    46
+P:    47
+C:   17,   18,   17
+C:   18,   19,   17
+C:   19,   20,   17
+C:   20,   21,   17
+C:   21,   22,   17
+C:   22,   23,   17
+C:   23,   24,   17
+C:   24,   25,   17
+C:   25,   26,   17
+C:   26,   27,   17
+C:   27,   28,   17
+C:   28,   29,   17
+C:   29,    0,   17
+C:   30,    1,   17
+C:   31,    2,   17
+C:   32,    3,   17
+C:   33,    4,   17
+C:   34,    5,   17
+C:   35,    6,   17
+C:   36,    7,   17
+C:   37,    8,   17
+C:   38,    9,   17
+C:   39,   10,   17
+C:   40,   11,   17
+C:   41,   12,   17
+C:   42,   13,   17
+C:   43,   14,   17
+C:   44,   15,   17
+C:   45,   16,   17
+P:    48
+P:    49
+P:    50
+P:    51
+P:    52
+P:    53
+P:    54
+P:    55
+P:    56
+P:    57
+P:    58
+P:    59
+P:    60
+P:    61
+P:    62
+P:    63
+P:    64
+P:    65
+P:    66
+P:    67
+P:    68
+P:    69
+P: Acabat
+C:comprova
+C:   46,   17,   10
+C:comprova
+C:   47,   18,   10
+C:comprova
+C:   48,   19,   10
+C:comprova
+C:   49,   20,   10
+C:comprova
+C:   50,   21,   10
+C:comprova
+C:   51,   22,   10
+C:comprova
+C:   52,   23,   10
+C:comprova
+C:   53,   24,   10
+C:comprova
+C:   54,   25,   10
+C:comprova
+C:   55,   26,   10
+C:comprova
+C:   56,   27,   10
+C:comprova
+C:   57,   28,   10
+C:comprova
+C:   58,   29,   10
+C:comprova
+C:   59,    0,   10
+C:comprova
+C:   60,    1,   10
+C:comprova
+C:   61,    2,   10
+C:comprova
+C:   62,    3,   10
+C:comprova
+C:   63,    4,   10
+C:comprova
+C:   64,    5,   10
+C:comprova
+C:   65,    6,   10
+C:comprova
+C:   66,    7,   10
+C:comprova
+C:   67,    8,   10
+C:comprova
+C:   68,    9,   10
+C:comprova
+C:   69,   10,   10
+C:comprova
+C:Acabat
+C:comprova
+C:Acabat
+C:comprova
+C:Acabat
+C:comprova
+C:Acabat
+C:comprova
+C:Acabat

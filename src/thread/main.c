@@ -24,7 +24,7 @@ void * productor_fun ( void * n )
 	int i;
 	int data;
 
-	for ( i = 0; i < 3; i++ )
+	for ( i = 0; i < 70; i++ )
 	{
 		// Genera la informació
 		data = 2*i;
@@ -62,7 +62,6 @@ void * consumitor_fun ( void * n )
 		// Zona delicada.
 		pthread_mutex_lock(&readBuffer);
 			// Comprobem finalitat del codi.
-			printf ("C:%5d,%5d\n", consumitor_pointer, productor_pointer);
 			if ( prod_end )
 			{
 				printf ("C:comprova\n");
@@ -78,6 +77,8 @@ void * consumitor_fun ( void * n )
 			// Llegeix del punter.
 			local = buffer[consumitor_pointer];
 			consumitor_pointer = (1+consumitor_pointer) % SIZE_M;
+
+			printf ("C:%5d,%5d,%5d\n", local, consumitor_pointer, productor_pointer);
 		pthread_mutex_unlock(&readBuffer);
 
 		// Ja pot alliberar el productor.
