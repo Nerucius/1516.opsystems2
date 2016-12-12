@@ -105,7 +105,6 @@ int main (int argc, char *argv[])
 {
 	initBlockThread ();
 
-	initThread (NUM_CONSUMITORS_THREADS, productor_fun, consumitor_fun);
-	endThread ();
+	initThread (productor_fun, consumitor_fun);
 return 0;
 }

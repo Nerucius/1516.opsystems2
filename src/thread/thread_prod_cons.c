@@ -13,11 +13,11 @@ sem_t prod_sem, cons_sem;
 int productor_pointer, consumitor_pointer, prod_end;
 
 // Buffer
-char **buffer;
-int buffer_size;
+char **thread_buffer;
+int thread_buffer_size;
 
 // Nombre de consumidors.
-int num_thread_consumitors;
+int thread_consumitors_num;
 
 // Funcio pel productor:
 char * (*productor_extract_data) (void);
@@ -40,16 +40,15 @@ void threadCreate__ ( pthread_t * pt, void * (*f) (void *) )
 /**
   * Fara un sol productor i consumidors com siguin demanats.
   */
-void initThread ( int numConsumitors, void * (*prod_fun)(void *), void * (*cons_fun)(void *) )
+void initThread ( void * (*prod_fun)(void *), void * (*cons_fun)(void *) )
 {
 	int i;
-	num_thread_consumitors = numConsumitors;
 
 	// Preparem el productor
 	threadCreate__ ( &productor, prod_fun);
 
 	// Reservem memòria.
-	consumitors = malloc ( numConsumitors * sizeof (pthread_t) );
+	consumitors = malloc ( thread_consumitors_num * sizeof (pthread_t) );
 	if ( consumitors == NULL )
 	{
 		printf ("Error, malloc for thread\n");
@@ -57,16 +56,15 @@ void initThread ( int numConsumitors, void * (*prod_fun)(void *), void * (*cons_
 	}
 
 	// Preparem el consumidor
-	for ( i = 0; i < numConsumitors; i++ )
+	for ( i = 0; i < thread_consumitors_num; i++ )
 		threadCreate__ ( consumitors +i, cons_fun);
-}
 
-void endThread ()
-{
-	int i;
+	// Esperem que acabin tots els fils.
 	pthread_join (productor, NULL);
-	for ( i = 0; i < num_thread_consumitors; i++ )
+	for ( i = 0; i < thread_consumitors_num; i++ )
 		pthread_join ( consumitors[i], NULL );
+
+	// Alliberem el malloc.
 	free (consumitors);
 }
 
@@ -90,15 +88,17 @@ void * productor_function ( void * n)
 			return NULL;
 		}
 
+/// CBUFER
 		// Ara es bloqueixa, esperant a que hi hagi memoria lliure.
 		sem_wait (&prod_sem);
 
 		// Un cop tenim permis, escribim la informació.
-		buffer[productor_pointer] = pointer;
-		productor_pointer = (1+productor_pointer) % buffer_size;
+		thread_buffer[productor_pointer] = pointer;
+		productor_pointer = (1+productor_pointer) % thread_buffer_size;
 
 		// Ja acabat tot el que teniem que fer, alliberem el consumidor.
 		sem_post (&cons_sem);
+/// CBUFER
 	}
 	//sem_getvalue (&cons_sem, &NUM_CONSUMITORS_THREADS); ???????????????? semafor pot fer un brodcast?
 return NULL;
@@ -127,8 +127,8 @@ void * consumitor_function ( void * n )
 			}
 
 			// Llegeix del punter.
-			pointer = buffer[consumitor_pointer];
-			consumitor_pointer = (1+consumitor_pointer) % buffer_size;
+			pointer = thread_buffer[consumitor_pointer];
+			consumitor_pointer = (1+consumitor_pointer) % thread_buffer_size;
 
 		pthread_mutex_unlock(&readBuffer);
 
@@ -141,16 +141,25 @@ void * consumitor_function ( void * n )
 return NULL;
 }
 
-void init_thread ( int sizeBuffer, char * (*ped) (void), int (*pc) (void), void (*cw) (char *) )
+/**
+  *
+  */
+void thread_init ( int sizeBuffer, int threadsConsumitor, char * (*ped) (void), int (*pc) (void), void (*cw) (char *) )
 {
-	// Definim el tamany del buffer.
-	buffer_size = sizeBuffer;
+	// Definim el tamany del buffer i nombre de consumidors.
+	thread_buffer_size = sizeBuffer;
+	thread_consumitors_num = threadsConsumitor;
 
 	// Definim les funcions:
 	productor_extract_data = ped;
 	productor_continue = pc;
 	consumitor_work = cw;
 
+}
+
+void thread_execute ()
+{
+	/* Definim les variables per fer coherent l'execucio multifil */
 	// Els semafors.
 	sem_init ( &prod_sem, 0, sizeBuffer);
 	sem_init ( &cons_sem, 0, 0);
@@ -159,4 +168,8 @@ void init_thread ( int sizeBuffer, char * (*ped) (void), int (*pc) (void), void 
 	productor_pointer = 0;
 	prod_end = 0; // False.
 	consumitor_pointer = 0;
+
+
+	// Executem tot.
+	initThread ( productor_function, consumitor_function );
 }

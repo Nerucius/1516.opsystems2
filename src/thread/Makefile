@@ -1,4 +1,4 @@
-LIBS = -l pthread
+LIBS = -l pthread -g
 LIBS_MAIN = thread_prod_cons.h
 FILES_O_IN = thread_prod_cons.o
 all: $(FILES_O_IN) main
