@@ -171,4 +171,7 @@ void cbuffer_end ( void )
 {
 	// Canviem una variable per a saber els consumidors quan acabar.
 	productor_end = 1;
+
+	// Alliberem un fil per que aquests es desbloqueixin gradualment.
+	sem_post ( &consumitor_semaphore );
 }
