@@ -37,7 +37,7 @@ InitProductor: data("Llegeix" "les dades");
 arrow;
 CondicioProductor: decision(width 1 height 0.75 "Ha llegit?");
 arrow " S\('i" ljust;
-GreenBloqueix: box "\m[lolita]Bloqueixa\m[]" rad 0.1;
+GreenBloqueix: box "\m[lolita]Bloqueja\m[]" rad 0.1;
 arrow;
 data("Escriu" "punter");
 arrow;
@@ -58,7 +58,7 @@ T: terminator("Acaba");
 .% Apartat del consumidor.
 down;
 box with .w at (T, Productor) + (1, 0) invisible "\m[blue]Consumidor\m[]";
-BlueBloqueix: box "\m[blue]Bloqueixa\m[]" rad 0.1;
+BlueBloqueix: box "\m[blue]Bloqueja\m[]" rad 0.1;
 arrow;
 CondicioConsumidor: decision(width 1 height 0.75 "Hi ha" "restants?");
 arrow " S\('i" ljust;
@@ -88,5 +88,5 @@ arrow color "lolita" at GreenAllibera.w to GreenBloqueix.e;
 # 0.75 codicional + 0.5 arrow + 0.5 box + 0.35 extres = 1.85
 box with .nw at CondicioConsumidor.nw - (0.05, -0.15) height 2 width 1.1;
 move to last box .n;
-"Zona protejida" above;
+"Zona protegida" above;
 .PE
