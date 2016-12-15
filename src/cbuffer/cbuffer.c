@@ -162,6 +162,9 @@ void cbuffer_free ( void )
 
 	// Memoria alliberada.
 	free ( buffer );
+
+	// Per fer un realloc amb sentit, es important redefinir el buffer.
+	buffer = NULL;
 }
 
 /**
