@@ -8,6 +8,7 @@
   *
   * @param size
   * És el tamany del buffer que vols reservar.
+  * Si aquest és menor o igual a zero, farà un exit 1.
   */
 void cbuffer_init ( int size );
 

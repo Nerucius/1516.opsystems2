@@ -37,11 +37,17 @@ int productor_end;
   *
   * @param size
   * És el tamany del buffer que vols reservar.
+  * Si aquest és menor o igual a zero, farà un exit 1.
   */
 void cbuffer_init ( int size )
 {
 	// Proteixim de casos sense sentit.
-	if ( size < 0 ) return;
+	if ( size <= 0 )
+	{
+		printf ("ERROR: size ≤ 0\n");
+		printf ("size = %d\n", size);
+		exit (1);
+	}
 
 	// Definim el tamany del buffer.
 	buffer_size = size;
