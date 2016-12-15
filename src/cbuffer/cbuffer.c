@@ -160,6 +160,8 @@ void * cbuffer_get ( void )
 
 /**
   * Funció per alliberar en memòria el que s'ha reservat al fer cbuffer_init.
+  *
+  * Nota: No allibera els fils adormits en el cbuffer_get. Per a fer-ho cridar primer cbuffer_end (); i tot seguit fer el cbuffer_free ();
   */
 void cbuffer_free ( void )
 {
@@ -174,7 +176,9 @@ void cbuffer_free ( void )
 }
 
 /**
-  * Nota: Per indicar als fils que fan el get, finalitzar fent: cbuffer_push ( NULL );
+  * Permet desigualar l'equilibri del cbuffer_get, permetent que tots els fils acabin.
+  *
+  * Nota: Cridar la funció abans de fer cbuffer_free;
   */
 void cbuffer_end ( void )
 {
