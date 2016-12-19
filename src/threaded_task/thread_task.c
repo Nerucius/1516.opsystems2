@@ -8,7 +8,7 @@
 void* (*f_getData) (void);		// return NULL end program.
 void (*f_processData) (void *);
 
-int status = 0;
+int status = 1;
 
 // Declarant funcions, son les funcions que executaran els threads.
 void* _producer(void*);
@@ -28,7 +28,7 @@ void tt_init(void* (*_f_getData) (void), void (*_f_processData) (void *)){
   f_processData = _f_processData;
   
   // Validem l'estat. Per evitar cridar tt_executeTast sense haver fer l'init previament.
-  status = 1;
+  status = 0;
 }
 
 
