@@ -59,7 +59,6 @@ int parseArgument(int argc, char **argv) {
 }
 
 void* thread_createTree(void* none){
-	int lineCount;            // Tamany real llegit i per a saber si continuar dins del bucle.
 	char **linesRead;        // Llista on hi ha les N línies llegides.
 	List **listHashTable;        // Array de llistes amb el format del hash.
 
@@ -68,15 +67,15 @@ void* thread_createTree(void* none){
 		
 		// Lectura en blocks de N lines o menys
 		pthread_mutex_lock(&readLock);
-		linesRead = read_readLines(readBlockSize, &lineCount);
+		linesRead = read_readLines(readBlockSize);
 		pthread_mutex_unlock(&readLock);
 
 		// Si no s'han llegit mes linies, sortir del bucle
-		if (!lineCount)
+		if (!linesRead)
 			break;
 
 		// Inserció de dades a la taula hash.
-		listHashTable = flow_linesIntoHashTable(linesRead, lineCount);
+		listHashTable = flow_linesIntoHashTable(linesRead);
 
 		// Insercio a l'arbre binari
 		pthread_mutex_lock(&treeLock);
@@ -263,7 +262,7 @@ int main(int argc, char **argv) {
 	// Alliberar memoria de les estructures
 	menu_delete(menu);
 	if (tree != NULL) tree_delete(tree, list_delete);
-	read_closeFile();
+//	read_closeFile(); !!!!!!!!!!! és necessari??
 
 	return EXIT_SUCCESS;
 }

@@ -36,37 +36,40 @@ void read_closeFile()
 
 /**
   * Llegeix el numero de linies del fitxer csv indicades i retorna un llistat de linies.
+  * Quan no hi ha més elements per llegir, hi haura un NULL
   *
   * @param requestedLines Numero de linies a llegir
-  * @param realCount numero de linies llegides realment
   */
-char** read_readLines(int requestedLines, int *realCount)
+char** read_readLines(int requestedLines)
 {
 	int i;
 	char ** all;
 	char line[MAXCHAR];
 
 	if ( !csvFile ) // Comprobar que no hem tancat el fitxer.
-	{
-		*realCount = 0;
 		return NULL;
-	}
-	all = ( char ** ) malloc ( requestedLines * sizeof (char *) );
+
+	all = ( char ** ) malloc ( (requestedLines +1) * sizeof (char *) );
 
 	for ( i = 0; i < requestedLines; i++ )
 	{
 		if (fgets(line, MAXCHAR, csvFile) != NULL)
 			all[i] = copyMalloc ( line );
 		else
-		{ // Realloc molt útil, ja que suposant que realCount = 0, alliverarà automaticament el malloc.
-			all = realloc ( all, i * sizeof (char *) );
+		{ // Tanquem el fitxer.
 			read_closeFile();
 			break;
 		}
 	}
 
-	// Retornem el nombre real de línies que hi ha a la llista.
-	*realCount = i;
+	// Proteixim el final
+	all[i] = NULL;
+
+	if (i == 0)
+	{ // Alliberem si no hi ha res.
+		free (all);
+		all = NULL;
+	}
 
 	// Retorna el valor desitjat. Una llista d'arrays.
 	return all;

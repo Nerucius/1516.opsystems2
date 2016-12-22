@@ -76,7 +76,7 @@ List *flow_inputElementInList(List *list, DataPoint *dataP) {
   *
   * Retorna una llista de List.
   */
-List **flow_linesIntoHashTable(char **lines, int count) {
+List **flow_linesIntoHashTable(char **lines) {
 	int i;                    // Pel loop.
 	List **hashTable;        // La llista a retornar.
 	int hash;                // La clau hash.
@@ -87,7 +87,7 @@ List **flow_linesIntoHashTable(char **lines, int count) {
 	hashTable = calloc(HASH_SIZE, sizeof(List *));
 
 	// Recorrem totes les línies entrades.
-	for (i = 0; i < count; i++) {
+	for (i = 0; lines[i] ; i++) {
 
 		// Parteix linea en columnes i despres extreu les dades que ens preocupen
 		splitLine(lines[i], splits, ',');

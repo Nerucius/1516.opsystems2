@@ -23,7 +23,7 @@ DataPoint *dataFromColumns(char **elements);
 
 List *flow_inputElementInList(List *list, DataPoint *dataP);
 
-List **flow_linesIntoHashTable(char **lines, int count);
+List **flow_linesIntoHashTable(char **lines);
 
 void flow_addHashtableToTree(RBTree *tree, List **listHash);
 
