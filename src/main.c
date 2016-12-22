@@ -6,7 +6,6 @@
 #include <ctype.h>
 #include <math.h>
 #include <pthread.h>
-#include <time.h>
 
 #include "util.h"							// Serveix per a fer funcionalitats generals. Dedicat a treballar amb strings.
 #include "read/easy-read.h"
@@ -63,6 +62,39 @@ int parseArgument(int argc, char **argv) {
 	return 1000;
 }
 
+void* thread_createTree(void* none){
+	char **linesRead;        // Llista on hi ha les N línies llegides.
+	List **listHashTable;        // Array de llistes amb el format del hash.
+
+	// Mentres hi hagi línies per llegir.
+	while (1) {
+		
+		// Lectura en blocks de N lines o menys
+		pthread_mutex_lock(&readLock);
+		linesRead = read_readLines(readBlockSize);
+		pthread_mutex_unlock(&readLock);
+
+		// Si no s'han llegit mes linies, sortir del bucle
+		if (!linesRead)
+			break;
+
+		// Inserció de dades a la taula hash.
+		listHashTable = flow_linesIntoHashTable(linesRead);
+
+		// Insercio a l'arbre binari
+		pthread_mutex_lock(&treeLock);
+		flow_addHashtableToTree(tree, listHashTable);
+		pthread_mutex_unlock(&treeLock);
+
+		// Free memory
+		for (int i = 0; i < HASH_SIZE; i++)
+			if (listHashTable[i])
+				list_delete(listHashTable[i]);
+		free(listHashTable);
+	}
+	
+	return NULL;
+}
 
 /******************
  * MENU FUNCTIONS *
@@ -72,7 +104,6 @@ void * tt_readLinesProducer ()
 {
  	return read_readLines (READ_LINES_COUNT);
 }
-
 void tt_processLinesConsumer ( void * ptr ){
 	// SE HACEN COSAS
 	// TODO Hacer cosas
@@ -97,6 +128,7 @@ void tt_processLinesConsumer ( void * ptr ){
 
 /** Opcio del menu per llegit el arbre desde un fitxer binari. */
 void opt_createTree() {
+	// TODO Create 2 threads and execute thread_createTree()
 	
 	if (readBlockSize <= 0) {
 		printf("Ha de ser un valor positiu. Heu entrat: %d\n", readBlockSize);
@@ -109,23 +141,11 @@ void opt_createTree() {
 		tree_delete(tree, list_delete);
 	}
 	tree = tree_new();
-
-	// Medim el temps de rellotge que triga per trobar 
-	struct timespec requestStart, requestEnd;
-	clock_gettime(CLOCK_REALTIME, &requestStart);
-
-	// Crea i executa una nova tasca en paraŀlel, amb les funcions que volem com a
-	// consumidor i productor
+	
+	// Nou codi
 	tt_init(tt_readLinesProducer, tt_processLinesConsumer);
 	tt_executeTast( CONSUMER_COUNT, CBUFFER_SIZE );
 	
-	clock_gettime(CLOCK_REALTIME, &requestEnd);
-	
-	double accum = 
-	( requestEnd.tv_sec - requestStart.tv_sec ) + 
-	( requestEnd.tv_nsec - requestStart.tv_nsec )   / 1e9;
-	    printf( "%lf\n", accum );
-
 	if(tree){
 		printf("Arbre creat correctament.\n");
 	}
