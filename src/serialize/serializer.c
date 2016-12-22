@@ -132,7 +132,7 @@ RBTree *ser_readTree(FILE *in) {
 	buffer[8] = '\0';
 
 	RBTree *tree = tree_new();
-	RBData *rbData;
+	RBData *rbData = NULL;
 
 	readBytes = fread(buffer, 1, 8, in);
 	if (readBytes == 0 || strcmp(buffer, FILE_START_FLAG) != 0) {

@@ -21,6 +21,9 @@ void read_initFile(char *name)
 		printf("El fitxer: %s\nNo existeix, o no tenim permisos.\n", name);
 		exit(EXIT_FAILURE);
 	}
+	// Read line 1, headers;
+	char line[MAXCHAR];
+	fgets(line, MAXCHAR, csvFile);
 }
 
 /**
