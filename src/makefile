@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Werror -g -std=c11
-LIBS = -l m -l pthread
+LIBS = -l m -l pthread -l time
 
 # Sources here
 SRCS = main.c util.c serialize/serializer.c rb-tree/red-black-tree.c hash/hash.c linked-list/linked-list.c read/easy-read.c menu/menu.c threaded_task/thread_task.c cbuffer/cbuffer.c
