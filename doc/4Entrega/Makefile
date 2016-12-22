@@ -10,4 +10,4 @@ out.pdf: out.eps
 	epspdf out.ps
 
 clear:
-	rm *.ps *.pdf
+	rm *.ps *.pdf -f
