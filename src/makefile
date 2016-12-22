@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Werror -g -std=c11
+CFLAGS = -Wall -Werror -g -std=c11 -O0
 LIBS = -l m -l pthread
 
 # Sources here

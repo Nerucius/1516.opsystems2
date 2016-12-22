@@ -14,100 +14,83 @@
 #include "hash/hash.h"
 #include "threaded_task/thread_task.h"
 
-// Configura numero de threads
-#define NUM_THREADS 4
-#define CONSUMER_COUNT 2
-#define READ_LINES_COUNT 1000
-#define CBUFFER_SIZE 1000
-
 int RUNNING = 1;        // Flag per continuar el menu
+
 // Globals
 RBTree *tree = NULL;    // Estructura del abre binari.
-int readBlockSize;      // Nombre de línies en que llegirà el fitxer. (primer apartat de la pràctica 2).
-
-pthread_mutex_t readLock;
 pthread_mutex_t treeLock;
 
+#define ARG_PERFTEST "-p"
+#define ARG_THREADC "-c"
+#define ARG_BUFFSIZE "-b"
+#define ARG_NUMLINES "-n"
+#define ARG_FILE "-f"
+
+int performanceTestMode;
+int consumerThreadsCount;
+int cBufferSize;
+int numLinesRead;
 
 /**
   * Funció per simplificar el codi del main, tot i donar-li tota la funcionalitat.
   * @return Numero de linies que llegir cada vegada
   */
-int parseArgument(int argc, char **argv) {
-	switch (argc) {
-		case 1: // Quan no indica res, per defecte.
-			read_initFile("file.csv");
-			break;
-		case 2: // Si posa una entrada,
-			if (isdigit(argv[1][0])) { // i es digit, llegira en base el dígit.
-				argc = atoi(argv[1]);
-				if (!argc) {
-					printf("S'ha de llegir un nombre de línies.\n");
-					printf("Ha entrat: %d\n", argc);
-					exit(7);
-				}
-				// Posem el read al final, per evitar problemes. Ja que si entres un zero donaria un alloc.
-				read_initFile("file.csv");
-				return argc;
-			} // Sino, llegira el fitxer indicat.
-			read_initFile(argv[1]);
-			break;
-		case 3: // Cas de posar 2 entrades, la primera sera per llegir, el segon les línies.
-			read_initFile(argv[1]);
-			return atoi(argv[2]);
-		default: // Altres casos (+2) enviara un missatge d'error.
-			printf("Usage: [nameFile [lines]]\n");
-			exit(1);
+void parseArguments(int argc, char **argv) {
+	int ai;
+
+	// Default params
+	performanceTestMode = 0;
+	consumerThreadsCount = 2;
+	cBufferSize = 1000;
+	numLinesRead = 1000;
+	char* filename = "file.csv";
+
+	// Process all arguments, some with parameters
+	for (ai = 1; ai < argc; ai++){
+		char* arg = argv[ai];
+
+		if(strcmp(arg, ARG_PERFTEST) == 0){
+			performanceTestMode = 1;
+			continue;
+		}
+
+		if(strcmp(arg, ARG_THREADC) == 0){
+			consumerThreadsCount = atoi(argv[ai+1]);
+			ai++;
+			continue;
+		}
+
+		if(strcmp(arg, ARG_BUFFSIZE) == 0){
+			cBufferSize = atoi(argv[ai+1]);
+			ai++;
+			continue;
+		}
+
+		if(strcmp(arg, ARG_NUMLINES) == 0){
+			numLinesRead = atoi(argv[ai+1]);
+			ai++;
+			continue;
+		}
+
+		if(strcmp(arg, ARG_FILE) == 0){
+			filename = argv[ai+1];
+			ai++;
+			continue;
+		}
 	}
-	return 1000;
-}
-
-void* thread_createTree(void* none){
-	char **linesRead;        // Llista on hi ha les N línies llegides.
-	List **listHashTable;        // Array de llistes amb el format del hash.
-
-	// Mentres hi hagi línies per llegir.
-	while (1) {
-		
-		// Lectura en blocks de N lines o menys
-		pthread_mutex_lock(&readLock);
-		linesRead = read_readLines(readBlockSize);
-		pthread_mutex_unlock(&readLock);
-
-		// Si no s'han llegit mes linies, sortir del bucle
-		if (!linesRead)
-			break;
-
-		// Inserció de dades a la taula hash.
-		listHashTable = flow_linesIntoHashTable(linesRead);
-
-		// Insercio a l'arbre binari
-		pthread_mutex_lock(&treeLock);
-		flow_addHashtableToTree(tree, listHashTable);
-		pthread_mutex_unlock(&treeLock);
-
-		// Free memory
-		for (int i = 0; i < HASH_SIZE; i++)
-			if (listHashTable[i])
-				list_delete(listHashTable[i]);
-		free(listHashTable);
-	}
-	
-	return NULL;
+	// Initialized file for reading
+	read_initFile(filename);
 }
 
 /******************
  * MENU FUNCTIONS *
  ******************/
 
-void * tt_readLinesProducer ()
-{
- 	return read_readLines (READ_LINES_COUNT);
+void * tt_readLinesProducer () {
+ 	return read_readLines (numLinesRead);
 }
+
 void tt_processLinesConsumer ( void * ptr ){
-	// SE HACEN COSAS
-	// TODO Hacer cosas
-	
 	char** lines = ptr;
 
 	List** listHashTable = flow_linesIntoHashTable(lines);
@@ -128,10 +111,9 @@ void tt_processLinesConsumer ( void * ptr ){
 
 /** Opcio del menu per llegit el arbre desde un fitxer binari. */
 void opt_createTree() {
-	// TODO Create 2 threads and execute thread_createTree()
-	
-	if (readBlockSize <= 0) {
-		printf("Ha de ser un valor positiu. Heu entrat: %d\n", readBlockSize);
+
+	if (numLinesRead <= 0) {
+		printf("Ha de ser un valor positiu. Heu entrat: %d\n", numLinesRead);
 		exit(EXIT_FAILURE);
 	}
 
@@ -144,9 +126,9 @@ void opt_createTree() {
 	
 	// Nou codi
 	tt_init(tt_readLinesProducer, tt_processLinesConsumer);
-	tt_executeTast( CONSUMER_COUNT, CBUFFER_SIZE );
+	tt_executeTast( consumerThreadsCount, cBufferSize );
 	
-	if(tree){
+	if(tree && !performanceTestMode){
 		printf("Arbre creat correctament.\n");
 	}
 }
@@ -271,7 +253,13 @@ void opt_exitProgram() {
 }
 
 int main(int argc, char **argv) {
-	readBlockSize = parseArgument(argc, argv);
+	parseArguments(argc, argv);
+
+	if(performanceTestMode){
+		opt_createTree();
+		tree_delete(tree, list_delete);
+		return EXIT_SUCCESS;
+	}
 
 	// Crear el menu i els seus items.
 	Menu *menu = menu_new("Menu de l'Aplicacio");
