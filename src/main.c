@@ -12,9 +12,13 @@
 #include "menu/menu.h"
 #include "serialize/serializer.h"
 #include "hash/hash.h"
+#include "threaded_task/thread_task.h"
 
 // Configura numero de threads
 #define NUM_THREADS 4
+#define CONSUMER_COUNT 2
+#define READ_LINES_COUNT 1000
+#define CBUFFER_SIZE 1000
 
 int RUNNING = 1;        // Flag per continuar el menu
 // Globals
@@ -96,6 +100,32 @@ void* thread_createTree(void* none){
  * MENU FUNCTIONS *
  ******************/
 
+void * tt_readLinesProducer ()
+{
+ 	return read_readLines (READ_LINES_COUNT);
+}
+void tt_processLinesConsumer ( void * ptr ){
+	// SE HACEN COSAS
+	// TODO Hacer cosas
+	
+	char** lines = ptr;
+
+	List** listHashTable = flow_linesIntoHashTable(lines);
+
+	// Insercio a l'arbre binari
+	pthread_mutex_lock(&treeLock);
+	flow_addHashtableToTree(tree, listHashTable);
+	pthread_mutex_unlock(&treeLock);
+
+	// Free memory
+	for (int i = 0; i < HASH_SIZE; i++)
+		if (listHashTable[i])
+			list_delete(listHashTable[i]);
+	free(listHashTable);
+
+	return;
+}
+
 /** Opcio del menu per llegit el arbre desde un fitxer binari. */
 void opt_createTree() {
 	// TODO Create 2 threads and execute thread_createTree()
@@ -112,13 +142,9 @@ void opt_createTree() {
 	}
 	tree = tree_new();
 	
-	pthread_t threads[NUM_THREADS];
-	for(int i = 0; i < NUM_THREADS; i++)
-		pthread_create(&threads[i], NULL, thread_createTree, NULL);	
-	
-	for(int i = 0; i < NUM_THREADS; i++)
-		pthread_join(threads[i], NULL);
-	
+	// Nou codi
+	tt_init(tt_readLinesProducer, tt_processLinesConsumer);
+	tt_executeTast( CONSUMER_COUNT, CBUFFER_SIZE );
 	
 	if(tree){
 		printf("Arbre creat correctament.\n");

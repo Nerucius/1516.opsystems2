@@ -3,7 +3,7 @@ CFLAGS = -Wall -Werror -g -std=c11
 LIBS = -l m -l pthread
 
 # Sources here
-SRCS = main.c util.c serialize/serializer.c rb-tree/red-black-tree.c hash/hash.c linked-list/linked-list.c read/easy-read.c menu/menu.c
+SRCS = main.c util.c serialize/serializer.c rb-tree/red-black-tree.c hash/hash.c linked-list/linked-list.c read/easy-read.c menu/menu.c threaded_task/thread_task.c cbuffer/cbuffer.c
 OBJS = $(SRCS:.c=.o)
 
 # !!! Insert executable name here (.exe for win64) !!!

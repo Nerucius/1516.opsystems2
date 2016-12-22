@@ -62,6 +62,9 @@ void tt_executeTast(int num_consumers, int buffer_size)
 	for ( i = 0; i < num_consumers; i++ )
 		pthread_join ( consumitors[i], NULL );
 
+	// Alliberem els threads
+	free (consumitors);
+
 	// Alliberem el buffer.
 	cbuffer_free ();
 }
