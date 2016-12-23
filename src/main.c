@@ -14,11 +14,10 @@
 #include "hash/hash.h"
 #include "threaded_task/thread_task.h"
 
-int RUNNING = 1;        // Flag per continuar el menu
-
 // Globals
 RBTree *tree = NULL;    // Estructura del abre binari.
 pthread_mutex_t treeLock;
+int RUNNING = 1;        // Flag per continuar el menu
 
 #define ARG_PERFTEST "-p"
 #define ARG_THREADC "-c"
@@ -26,6 +25,7 @@ pthread_mutex_t treeLock;
 #define ARG_NUMLINES "-n"
 #define ARG_FILE "-f"
 
+// Config bars
 int performanceTestMode;
 int consumerThreadsCount;
 int cBufferSize;
@@ -38,11 +38,12 @@ int numLinesRead;
 void parseArguments(int argc, char **argv) {
 	int ai;
 
-	// Default params
+	// Per defecte, els parametres es posen en els seus
+	// valors optims d'acord amb els resultats obtinguts
 	performanceTestMode = 0;
-	consumerThreadsCount = 2;
-	cBufferSize = 1000;
-	numLinesRead = 1000;
+	consumerThreadsCount = 4;
+	cBufferSize = 8192;
+	numLinesRead = 4000;
 	char* filename = "file.csv";
 
 	// Process all arguments, some with parameters
@@ -78,13 +79,13 @@ void parseArguments(int argc, char **argv) {
 			continue;
 		}
 	}
-	// Initialized file for reading
+	// Initialize file for reading
 	read_initFile(filename);
 }
 
-/******************
- * MENU FUNCTIONS *
- ******************/
+/***********************
+ * CONSUMER & PRODUCER *
+ ***********************/
 
 void * tt_readLinesProducer () {
  	return read_readLines (numLinesRead);
@@ -109,6 +110,10 @@ void tt_processLinesConsumer ( void * ptr ){
 	return;
 }
 
+/******************
+ * MENU FUNCTIONS *
+ ******************/
+
 /** Opcio del menu per llegit el arbre desde un fitxer binari. */
 void opt_createTree() {
 
@@ -124,7 +129,10 @@ void opt_createTree() {
 	}
 	tree = tree_new();
 	
-	// Nou codi
+	// La nostra llibreria Threaded Task funciona en programacio procedural, nomes li
+	// cal saber la funció que executa el productor, la que executa el consumidor
+	// i un parell de parametres.
+	// Sense saber res més del programa, Executa una tasca en paral.lel.
 	tt_init(tt_readLinesProducer, tt_processLinesConsumer);
 	tt_executeTast( consumerThreadsCount, cBufferSize );
 	
@@ -255,6 +263,7 @@ void opt_exitProgram() {
 int main(int argc, char **argv) {
 	parseArguments(argc, argv);
 
+	// Codi per mesurar el temps d'execucio del programa, amb el parametre -t
 	if(performanceTestMode){
 		opt_createTree();
 		tree_delete(tree, list_delete);
@@ -276,7 +285,7 @@ int main(int argc, char **argv) {
 	// Alliberar memoria de les estructures
 	menu_delete(menu);
 	if (tree != NULL) tree_delete(tree, list_delete);
-//	read_closeFile(); !!!!!!!!!!! és necessari??
+    read_closeFile();
 
 	return EXIT_SUCCESS;
 }
