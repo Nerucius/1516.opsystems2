@@ -1,33 +1,26 @@
-# Sistemas Operativos 2
-## Practica Laboratorio
+# Operative Systems 2
 
-A l’assignatura de Sistemes Operatius II es realitzarà un únic projecte pràctic al llarg del curs.
-L’objectiu general del projecte pràctic és desenvolupar una aplicació (sense interfície gràfica) que
-permeti extreure i indexar la informació dels vols d’avió entre ciutats dels Estats Units. Els fitxers
-de text a processar són proporcionats pel professor tot i que també es poden baixar lliurement
-d’Internet, veure http://stat-computing.org/dataexpo/2009/the-data.html. Cada fitxer és
-un fitxer de text pla i conté la informació dels vols d’un determinat any. Cada fila de cadascun
-d’aquests fitxers conté la informació d’un vol. Entre altres coses, conté informació sbore l’aeroport
-d’origen, l’aeroport destí, el retard en sortir, el retard en arribar, etc. L’objectiu és extreure part
-d’aquesta informació i gestionar-la.
+## Laboratory
 
-### Alumnes
-__German Dempere__  
+A course-long project will be built, expanding upon previous work with new concepts every so oftnen.
+
+The general objetive of the course is to learn how to take advantage of multi-core capabilities of
+modern systems to parallelize tasks. In this case, the task will be to index a list of flights between
+US cities, and generate statistical data on delayed flights.
+
+The files can be found at [StatComputing (flight data 2009)](http://stat-computing.org/dataexpo/2009/the-data.html)
+The format is CSV, it is up to the student how to read and process the file.
+
+### Students
+__Herman Dempere__  
 __Arnau Sistach__
 
-Objectius
-=========
+## Objectives
 
-Llegir el document
-------------------
-De moment sembla que ho fem correctament.
-
-Insertar al abre binari
------------------------
-Aparentment no ho fem. Tot i tenir-ho tot per a poder-ho fer.
-
-Llista enllaçada
-----------------
-Aquesta és prou complexa, ja que s'ha de tenir la resta feta.
-Tenir present que aquesta llista entrellaçada ha de tenir com a cos un array de 7x2 per a poder recuperar posteriorment el mean.
-Per a que pugui funcionar, recordar a inicialitzar els valors a zero. Per exemple amb un calloc.
+- [X] Read the CSV file and extract relevant information
+- [X] Read the CSV file in blocks of X lines, and build a HashTable.
+- [X] Insert the HashTable into a RB Binary Search Tree
+- [X] The BST contains the data in linked list form for each city as index, there is a linked list of cities where
+flights go to.
+- [X] Use the POSIX Threads library to parallelize the processing and insertion of data from the CSV files into the BST
+- [X] Performance testing
